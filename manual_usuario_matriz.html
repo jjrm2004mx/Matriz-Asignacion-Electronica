@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Manual de Usuario - Matriz Asignación Electrónica</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-accent: #ff6b35;
+  --color-success: #4caf50;
+  --color-info: #2196f3;
+  --color-border: #d1d9e0;
+  --color-bg-light: #f5f9fc;
+}
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #ffffff;
+  color: #222;
+  line-height: 1.6;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+header {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.section {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 25px 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.section h2 {
+  color: var(--color-primary);
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 8px;
+}
+.section h3 {
+  color: var(--color-primary-dark);
+  margin: 20px 0 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.step {
+  margin: 15px 0;
+  padding: 12px 15px;
+  background: var(--color-bg-light);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 4px;
+}
+.step-number {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #ffffff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 26px;
+  font-weight: 600;
+  margin-right: 10px;
+  font-size: 14px;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 4px;
+}
+.badge-propios {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #2196f3;
+}
+.badge-terceros {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #4caf50;
+}
+.warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+.warning strong {
+  color: #856404;
+}
+.tip {
+  background: #d1ecf1;
+  border: 1px solid #17a2b8;
+  border-left: 4px solid #17a2b8;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+.tip strong {
+  color: #0c5460;
+}
+ul, ol {
+  margin: 10px 0;
+  padding-left: 25px;
+}
+li {
+  margin: 8px 0;
+}
+.icon {
+  font-size: 18px;
+  margin-right: 6px;
+}
+kbd {
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  padding: 2px 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.screenshot-placeholder {
+  background: var(--color-bg-light);
+  border: 2px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  margin: 15px 0;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  border-top: 1px solid var(--color-border);
+  color: #666;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📋 Manual de Usuario</h1>
+    <p>Sistema de Matriz de Asignación Electrónica por COPE</p>
+  </header>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <div class="section">
+    <h2>🎯 1. Introducción</h2>
+    <p>Este sistema permite configurar y gestionar la asignación electrónica de órdenes por COPE (Centro de Operaciones), organizadas en tres categorías principales:</p>
+    <ul>
+      <li><strong>Altas:</strong> Configuraciones para nuevos servicios</li>
+      <li><strong>Cambio Domicilio:</strong> Configuraciones para cambios de ubicación</li>
+      <li><strong>Migraciones:</strong> Configuraciones para cambios de tecnología</li>
+    </ul>
+    <p>El sistema clasifica cada asignación en dos tipos de recurso:</p>
+    <div style="margin: 10px 0;">
+      <span class="badge badge-propios">Propios</span> - Recursos internos de la empresa
+    </div>
+    <div style="margin: 10px 0;">
+      <span class="badge badge-terceros">Terceros</span> - Recursos externos o contratistas
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: INTERFAZ -->
+  <div class="section">
+    <h2>🖥️ 2. Interfaz del Sistema</h2>
+    
+    <h3>Panel de Filtros (parte superior)</h3>
+    <ul>
+      <li><strong>División:</strong> Filtra por división organizacional</li>
+      <li><strong>Área:</strong> Filtra por área específica</li>
+      <li><strong>COPE:</strong> Filtra por COPE específico</li>
+      <li><strong>Tipo Recurso:</strong> Selecciona el tipo de recurso a asignar <span class="badge badge-propios">Propios</span> o <span class="badge badge-terceros">Terceros</span></li>
+      <li><strong>Buscar:</strong> Campo de búsqueda rápida de COPEs</li>
+    </ul>
+
+    <h3>Matriz de Asignación</h3>
+    <p>Tabla con 16 COPEs (COPE 1 al COPE 8 y COPE 11 al COPE 18) y múltiples subcategorías organizadas por:</p>
+    <ul>
+      <li><strong>Altas:</strong> A0, AT</li>
+      <li><strong>Cambio Domicilio:</strong> D1, D2, D3</li>
+      <li><strong>Migraciones:</strong> TS, TV</li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN 3: INSTRUCCIONES PASO A PASO -->
+  <div class="section">
+    <h2>📝 3. Cómo Usar el Sistema</h2>
+
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Seleccionar Tipo de Recurso</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Antes de marcar cualquier opción en la matriz, debe seleccionar el <strong>Tipo Recurso</strong> en el panel superior:
+        <span class="badge badge-propios">Propios</span> o <span class="badge badge-terceros">Terceros</span>
+      </p>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ Importante:</strong> Si intenta seleccionar una opción sin haber elegido el Tipo de Recurso, el sistema mostrará una alerta y no permitirá la selección.
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Marcar Opciones en la Matriz</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Haga clic en los radio buttons de las celdas correspondientes. Al seleccionar:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>La celda cambiará de color según el tipo de recurso elegido</li>
+        <li><span class="badge badge-propios">Propios</span> = fondo azul claro</li>
+        <li><span class="badge badge-terceros">Terceros</span> = fondo verde claro</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Deseleccionar Opciones</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Para deseleccionar un radio button, simplemente haga clic nuevamente sobre él. La celda volverá a su color original.
+      </p>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Consejo:</strong> Puede hacer clic en cualquier celda para seleccionarla (se mostrará un borde negro grueso). Esto es útil para la función de arrastre.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: FUNCIONES AVANZADAS -->
+  <div class="section">
+    <h2>⚡ 4. Funciones Avanzadas</h2>
+
+    <h3>🖱️ Copiar Configuración con Arrastre</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Seleccionar celda origen</strong>
+      <p style="margin: 8px 0 0 36px;">Haga clic en la celda cuya configuración desea copiar</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Mantener tecla <kbd>Ctrl</kbd></strong>
+      <p style="margin: 8px 0 0 36px;">
+        Al presionar <kbd>Ctrl</kbd>, aparecerá un pequeño cuadrado negro en la esquina inferior derecha de la celda seleccionada
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Arrastrar sobre otras celdas</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Con <kbd>Ctrl</kbd> presionado, haga clic en el cuadrado negro y arrastre sobre las celdas donde desea aplicar la misma configuración
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">4</span>
+      <strong>Confirmar</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Al soltar el mouse, aparecerá un mensaje de confirmación. Si acepta, todas las celdas seleccionadas tomarán el mismo tipo de recurso y color
+      </p>
+    </div>
+
+    <h3>🔍 Búsqueda y Filtrado</h3>
+    <ul>
+      <li><strong>Buscar COPE:</strong> Escriba en el campo "Buscar" para filtrar COPEs por texto. Se mostrarán solo las filas que coincidan</li>
+      <li><strong>Limpiar búsqueda:</strong> Haga clic en el botón <strong>✕</strong> junto al campo de búsqueda para mostrar todos los COPEs nuevamente</li>
+    </ul>
+
+    <h3>🗑️ Limpiar Selecciones</h3>
+    <ul>
+      <li><strong>Limpiar un COPE:</strong> Haga clic en el botón <strong>🗑️</strong> junto al nombre del COPE para eliminar todas sus selecciones</li>
+      <li><strong>Limpiar Todo:</strong> Haga clic en el botón <strong>🗑️ Limpiar Todo</strong> en la parte inferior para eliminar todas las selecciones de la matriz</li>
+    </ul>
+
+    <div class="warning">
+      <strong>⚠️ Atención:</strong> Las acciones de limpiar requieren confirmación. El sistema le pedirá que confirme antes de eliminar las selecciones.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5: GUARDAR -->
+  <div class="section">
+    <h2>💾 5. Guardar Configuración</h2>
+
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Revisar selecciones</strong>
+      <p style="margin: 8px 0 0 36px;">Verifique que todas las configuraciones estén correctamente marcadas</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Hacer clic en <span class="icon">💾</span> Guardar</strong>
+      <p style="margin: 8px 0 0 36px;">El sistema generará un resumen en formato JSON con todas las selecciones</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Revisar el resumen</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Se abrirá una ventana modal mostrando:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>División y Área seleccionadas</li>
+        <li>COPE filtrado</li>
+        <li>Detalle de todas las selecciones realizadas</li>
+        <li>Total de selecciones</li>
+      </ul>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Información Guardada:</strong> Para cada selección se guarda el COPE, la categoría, la subcategoría, el valor y el tipo de recurso (Propios/Terceros).
+    </div>
+  </div>
+
+  <!-- SECCIÓN 6: RESOLUCIÓN DE PROBLEMAS -->
+  <div class="section">
+    <h2>🔧 6. Resolución de Problemas</h2>
+
+    <h3>❌ No puedo seleccionar opciones en la matriz</h3>
+    <p><strong>Solución:</strong> Asegúrese de haber seleccionado primero un <strong>Tipo de Recurso</strong> (Propios o Terceros) en el panel superior.</p>
+
+    <h3>🎨 Los colores no se aplican correctamente</h3>
+    <p><strong>Solución:</strong> Verifique que haya seleccionado el Tipo de Recurso antes de marcar el radio button. Si ya estaba marcado, deselecciónelo y vuelva a seleccionarlo con el Tipo de Recurso correcto.</p>
+
+    <h3>🖱️ El arrastre no funciona</h3>
+    <p><strong>Solución:</strong> Asegúrese de:</p>
+    <ul>
+      <li>Mantener presionada la tecla <kbd>Ctrl</kbd> durante todo el proceso</li>
+      <li>Hacer clic específicamente en el cuadrado negro de la esquina inferior derecha</li>
+      <li>Arrastrar sobre celdas válidas (que tengan radio buttons)</li>
+    </ul>
+
+    <h3>🔍 No encuentro un COPE específico</h3>
+    <p><strong>Solución:</strong> Use el campo de búsqueda en la parte superior. Si aplicó un filtro anteriormente, haga clic en el botón <strong>✕</strong> para limpiar la búsqueda.</p>
+  </div>
+
+  <!-- SECCIÓN 7: ATAJOS DE TECLADO -->
+  <div class="section">
+    <h2>⌨️ 7. Atajos de Teclado</h2>
+    <ul>
+      <li><kbd>Ctrl</kbd> + Arrastre = Copiar configuración de celda a múltiples celdas</li>
+      <li>Clic en celda = Seleccionar celda (borde negro)</li>
+      <li>Clic en radio seleccionado = Deseleccionar</li>
+    </ul>
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <p><strong>Sistema de Matriz de Asignación Electrónica</strong></p>
+    <p>Para soporte técnico o consultas, contacte al administrador del sistema</p>
+    <p style="margin-top: 10px; color: #999;">Versión 1.0 | Última actualización: Noviembre 2025</p>
+  </footer>
+</div>
+</body>
+</html>
