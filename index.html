@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Matriz Asignación Electronica</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-header-bg: #0a6cbd;
+  --color-header-text: #ffffff;
+  --color-row-alt: #f5f9fc;
+  --color-border: #d1d9e0;
+  --color-hover: #e3f1ff;
+  --radius: 4px;
+  --font-stack: "Segoe UI", Arial, sans-serif;
+}
+body {
+  font-family: var(--font-stack);
+  margin: 0;
+  background: #ffffff;
+  color: #222;
+}
+header.filtros {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 16px 20px 8px 20px;
+  background: linear-gradient(90deg,var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-header-text);
+}
+@media (max-width: 768px) {
+  header.filtros {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    padding: 12px 10px 6px 10px;
+  }
+}
+header.filtros label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+header.filtros select, header.filtros input[type="text"] {
+  width: 100%;
+  border: 1px solid #ffffff55;
+  background: #ffffff;
+  color: #222;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+header.filtros select.highlight {
+  animation: pulseHighlight 1.5s ease-in-out 3;
+  border: 2px solid #ff6b35;
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+}
+/* Estilos para las opciones del selector de Tipo Recurso */
+#tipoRecurso option[value="ORDENES"] {
+  background: #e3f2fd;
+  color: #0d47a1;
+  font-weight: 600;
+}
+#tipoRecurso option[value="ORDENES_SF"] {
+  background: #c8e6c9;
+  color: #1b5e20;
+  font-weight: 600;
+}
+/* Estilo del select cuando está seleccionado Propios */
+#tipoRecurso.selected-propios {
+  background: #e3f2fd !important;
+  border: 2px solid #2196f3 !important;
+  color: #0d47a1 !important;
+  font-weight: 600;
+}
+/* Estilo del select cuando está seleccionado Terceros */
+#tipoRecurso.selected-terceros {
+  background: #c8e6c9 !important;
+  border: 2px solid #4caf50 !important;
+  color: #1b5e20 !important;
+  font-weight: 600;
+}
+@keyframes pulseHighlight {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.9);
+    transform: scale(1.02);
+  }
+}
+.search-wrapper {
+  position: relative;
+}
+.search-wrapper input[type="text"] {
+  padding-right: 32px;
+}
+.clear-search {
+  position: absolute;
+  right: 6px;
+  top: calc(50% + 10px);
+  transform: translateY(-50%);
+  background: #ff6b35;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.clear-search:hover {
+  background: #e85a28;
+  transform: translateY(-50%) scale(1.1);
+}
+.clear-search:active {
+  transform: translateY(-50%) scale(0.95);
+}
+.clear-search.visible {
+  display: flex;
+}
+main { 
+  padding: 12px 20px 20px 20px; 
+  max-width: 100%;
+  overflow-x: hidden;
+}
+@media (max-width: 768px) {
+  main {
+    padding: 8px 10px 20px 10px;
+  }
+}
+.table-wrap { 
+  overflow-x: auto; 
+  max-width: 100%;
+}
+.table-matriz {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+@media (max-width: 768px) {
+  .table-matriz {
+    font-size: 11px;
+  }
+  .table-matriz thead th {
+    padding: 6px 4px;
+    font-size: 10px;
+  }
+  .table-matriz tbody td, .table-matriz tbody th {
+    padding: 3px 4px;
+  }
+}
+.table-matriz thead th {
+  background: var(--color-header-bg);
+  color: var(--color-header-text);
+  padding: 10px 6px;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  font-weight: 600;
+}
+.table-matriz thead tr:nth-child(2) th {
+  font-weight: 500;
+  font-size: 11px;
+  padding: 6px 4px;
+}
+.table-matriz tbody td, .table-matriz tbody th {
+  border: 1px solid var(--color-border);
+  padding: 4px 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.table-matriz tbody td.tipo-propios {
+  background: #e3f2fd !important;
+}
+.table-matriz tbody td.tipo-propios input[type="radio"] {
+  accent-color: #2196f3;
+}
+.table-matriz tbody td.tipo-terceros {
+  background: #e8f5e9 !important;
+}
+.table-matriz tbody td.tipo-terceros input[type="radio"] {
+  accent-color: #4caf50;
+}
+/* Selección de celda tipo Excel */
+.cell-selected {
+  outline: 3px solid #000 !important;
+  outline-offset: -3px !important;
+  position: relative;
+}
+/* Punto negro en la esquina para arrastrar (aparece con Ctrl) */
+.cell-selected.drag-enabled::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  cursor: crosshair;
+  z-index: 10;
+  border: 1px solid #fff;
+}
+/* Estilos durante el arrastre */
+.drag-source {
+  box-shadow: 0 0 0 3px #ffc107 !important;
+}
+.drag-hover {
+  box-shadow: 0 0 0 2px #ff6b35 inset !important;
+}
+.table-matriz tbody th { /* primera columna COPE */
+  background: #fafbfd;
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  position: relative;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
+}
+.cope-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 12px;
+}
+.cope-limpiar {
+  background: #ff6b35;
+  border: none;
+  color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  flex-shrink: 0;
+  line-height: 1;
+}
+.cope-limpiar:hover {
+  background: #e85a28;
+  transform: scale(1.1);
+}
+.cope-limpiar:active {
+  transform: scale(0.95);
+}
+.table-matriz tbody tr:nth-child(even) td, .table-matriz tbody tr:nth-child(even) th {
+  background: var(--color-row-alt);
+}
+.table-matriz tbody tr:hover td, .table-matriz tbody tr:hover th {
+  background: var(--color-hover);
+}
+.radio-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.radio-cell label { cursor: pointer; }
+.radio-cell input[type="radio"] { cursor: pointer; }
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+button.guardar {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+button.guardar:hover { background: var(--color-primary-dark); }
+button.guardar:active { transform: scale(.97); }
+button.limpiar {
+  background: #ff6b35;
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+button.limpiar:hover { background: #e85a28; }
+button.limpiar:active { transform: scale(.97); }
+.output-box {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  background: #f9fcff;
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+.sticky-top-note {
+  font-size: 11px;
+  margin: 0 0 6px 0;
+  color: #555;
+}
+/* Modal flotante */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.visible {
+  display: flex;
+}
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-header {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  padding: 16px 20px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-header-text);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-body pre {
+  background: #f5f9fc;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 16px;
+  margin: 0;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #222;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.modal-footer button {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-footer button:hover {
+  background: var(--color-primary-dark);
+}
+</style>
+</head>
+<body>
+  <header class="filtros">
+    <div>
+      <label for="division">Division</label>
+      <select id="division">
+        <option value="">(Todas)</option>
+        <option>División Norte</option>
+        <option>División Sur</option>
+        <option>División Centro</option>
+      </select>
+    </div>
+    <div>
+      <label for="area">Área</label>
+      <select id="area">
+        <option value="">(Todas)</option>
+        <option>Red</option>
+        <option>Operaciones</option>
+        <option>Atención</option>
+      </select>
+    </div>
+    <div>
+      <label for="cope">COPE</label>
+      <select id="cope">
+        <option value="">(Todos)</option>
+        <option>COPE 1</option>
+        <option>COPE 2</option>
+        <option>COPE 3</option>
+      </select>
+    </div>
+    <div>
+      <label for="tipoRecurso">Tipo Recurso</label>
+      <select id="tipoRecurso">
+        <option value="">(Todos)</option>
+        <option value="ORDENES">Propios</option>
+        <option value="ORDENES_SF">Terceros</option>
+      </select>
+    </div>
+    <div class="search-wrapper">
+      <label for="buscar">Buscar</label>
+      <input type="text" id="buscar" placeholder="Filtrar COPE..." />
+      <button type="button" class="clear-search" id="clearSearch" title="Eliminar filtrado">✕</button>
+    </div>
+  </header>
+  <main>
+    <p class="sticky-top-note">Seleccione las opciones correspondientes para cada COPE en las categorías: Altas, Cambio Domicilio y Migraciones.</p>
+    <div class="table-wrap">
+      <table class="table-matriz" id="matriz">
+        <thead id="matrizHeader">
+          <!-- El encabezado se genera dinámicamente -->
+        </thead>
+        <tbody id="matrizBody">
+          <!-- COPEs de ejemplo, puede sustituir por las reales -->
+        </tbody>
+      </table>
+    </div>
+    <div class="button-container">
+      <button class="limpiar" id="btnLimpiar" type="button">🗑️ Limpiar Todo</button>
+      <button class="guardar" id="btnGuardar" type="button">💾 Guardar</button>
+    </div>
+  </main>
+  
+  <!-- Modal flotante para mostrar JSON -->
+  <div class="modal-overlay" id="modalJSON">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📋 Resultado JSON</h3>
+        <button class="modal-close" id="modalClose" title="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <pre id="jsonContent"></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCerrarModal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+<script>
+  console.log('🎬 ========================================');
+  console.log('🎬 INICIO DEL SCRIPT - JavaScript cargado');
+  console.log('🎬 ========================================');
+  
+  // ============ CONFIGURACIÓN DE DATOS ============
+  // Lista de COPEs a mostrar en las filas
+  const copes = [
+    'COPE 1', 'COPE 2', 'COPE 3', 'COPE 4', 'COPE 5', 'COPE 6', 'COPE 7', 'COPE 8',
+    'COPE 11', 'COPE 12', 'COPE 13', 'COPE 14', 'COPE 15', 'COPE 16', 'COPE 17', 'COPE 18'
+  ];
+  
+  // Definición de subcolumnas por categoría (modificar según necesidad)
+  // Formato: [['codigo', 'TIPO'], ...] donde TIPO puede ser 'ORDENES' o 'ORDENES_SF'
+  const columnasAltas = [['A0','ORDENES'], ['AT','ORDENES_SF']]; // Puede agregar: ['A1','ORDENES'], etc.
+  const columnasCambioDomicilio = [['D1','ORDENES'], ['D2','ORDENES_SF'], ['D3','ORDENES']]; // Puede agregar más
+  const columnasMigraciones = [['TS','ORDENES'],['TV','ORDENES_SF']]; // Puede agregar más si es necesario
+  
+  // Construcción automática del array de subcategorías
+  const subcategorias = [
+    ...columnasAltas.map(([sub, tipo]) => ({ categoria: 'Altas', sub, tipo })),
+    ...columnasCambioDomicilio.map(([sub, tipo]) => ({ categoria: 'CambioDomicilio', sub, tipo })),
+    ...columnasMigraciones.map(([sub, tipo]) => ({ categoria: 'Migraciones', sub, tipo }))
+  ];
+  // ===============================================
+  
+  // Generar encabezado dinámicamente
+  function generarEncabezado() {
+    const thead = document.getElementById('matrizHeader');
+    
+    // Primera fila: categorías principales
+    const tr1 = document.createElement('tr');
+    const thCope = document.createElement('th');
+    thCope.rowSpan = 2;
+    thCope.textContent = 'COPE';
+    tr1.appendChild(thCope);
+    
+    const thAltas = document.createElement('th');
+    thAltas.colSpan = columnasAltas.length;
+    thAltas.textContent = 'Altas';
+    tr1.appendChild(thAltas);
+    
+    const thCambio = document.createElement('th');
+    thCambio.colSpan = columnasCambioDomicilio.length;
+    thCambio.textContent = 'Cambio Domicilio';
+    tr1.appendChild(thCambio);
+    
+    const thMigra = document.createElement('th');
+    thMigra.colSpan = columnasMigraciones.length;
+    thMigra.textContent = 'Migraciones';
+    tr1.appendChild(thMigra);
+    
+    thead.appendChild(tr1);
+    
+    // Segunda fila: subcolumnas (solo mostrar el código, no el tipo)
+    const tr2 = document.createElement('tr');
+    [...columnasAltas, ...columnasCambioDomicilio, ...columnasMigraciones].forEach(([sub, tipo]) => {
+      const th = document.createElement('th');
+      th.textContent = sub;
+      tr2.appendChild(th);
+    });
+    thead.appendChild(tr2);
+  }
+  
+  // Generar filas del cuerpo
+  function generarFilas() {
+    const tbody = document.getElementById('matrizBody');
+    copes.forEach((cope, ci) => {
+      const tr = document.createElement('tr');
+      const th = document.createElement('th');
+      
+      // Crear contenedor para COPE y botón limpiar
+      const divCope = document.createElement('div');
+      divCope.className = 'cope-header-content';
+      
+      const spanCope = document.createElement('span');
+      spanCope.textContent = cope;
+      
+      const btnLimpiarCope = document.createElement('button');
+      btnLimpiarCope.className = 'cope-limpiar';
+      btnLimpiarCope.innerHTML = '🗑️';
+      btnLimpiarCope.title = `Limpiar selecciones de ${cope}`;
+      btnLimpiarCope.type = 'button';
+      
+      // Evento para limpiar solo este COPE
+      btnLimpiarCope.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const confirmacion = confirm(`⚠️ ¿Está seguro que desea eliminar TODAS las selecciones de ${cope}?\n\nPresione "Aceptar" para continuar o "Cancelar" para mantener las selecciones.`);
+        
+        if (confirmacion) {
+          // Deseleccionar solo los radio buttons de esta fila
+          tr.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+            radio.checked = false;
+            radio.dataset.wasChecked = 'false';
+          });
+          
+          // Quitar colores de las celdas de esta fila
+          tr.querySelectorAll('td.tipo-propios, td.tipo-terceros').forEach(celda => {
+            celda.classList.remove('tipo-propios', 'tipo-terceros');
+          });
+        }
+      });
+      
+      divCope.appendChild(spanCope);
+      divCope.appendChild(btnLimpiarCope);
+      th.appendChild(divCope);
+      tr.appendChild(th);
+      subcategorias.forEach((item, idx) => {
+        const td = document.createElement('td');
+        const div = document.createElement('div');
+        div.className = 'radio-cell';
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const radioId = `r_${cope}_${item.categoria}_${item.sub}`;
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = radioName;
+        radio.id = radioId;
+        radio.value = item.sub;
+        radio.dataset.tipo = item.tipo; // Guardar el tipo en data attribute
+        radio.checked = (ci+idx)%2===0;
+        
+        // Si está seleccionado inicialmente, aplicar tipo de recurso random
+        if (radio.checked) {
+          const tiposRecurso = ['ORDENES', 'ORDENES_SF'];
+          const tipoRandom = tiposRecurso[Math.floor(Math.random() * tiposRecurso.length)];
+          radio.dataset.wasChecked = 'true';
+          
+          // Aplicar estilo visual según el tipo aleatorio
+          if (tipoRandom === 'ORDENES') {
+            td.classList.add('tipo-propios');
+          } else {
+            td.classList.add('tipo-terceros');
+          }
+        }
+        
+        // Agregar evento click para validar tipo de recurso y mostrar alert
+        radio.addEventListener('click', function(e) {
+          const tipoRecursoSelect = document.getElementById('tipoRecurso');
+          const tipoRecurso = tipoRecursoSelect.value;
+          
+          // Si el radio ya estaba seleccionado, deseleccionarlo y quitar estilos
+          if (this.dataset.wasChecked === 'true') {
+            this.checked = false;
+            this.dataset.wasChecked = 'false';
+            td.classList.remove('tipo-propios', 'tipo-terceros');
+            return;
+          }
+          
+          if (!tipoRecurso) {
+            e.preventDefault();
+            this.checked = false;
+            alert('⚠️ Debe seleccionar un Tipo de Recurso (Propios o Terceros) antes de marcar opciones en la matriz.');
+            
+            // Iluminar el selector
+            tipoRecursoSelect.classList.add('highlight');
+            tipoRecursoSelect.focus();
+            
+            // Remover la iluminación después de la animación
+            setTimeout(() => {
+              tipoRecursoSelect.classList.remove('highlight');
+            }, 4500);
+            
+            return false;
+          }
+          
+          // Aplicar estilo visual según el tipo de recurso
+          td.classList.remove('tipo-propios', 'tipo-terceros');
+          if (tipoRecurso === 'ORDENES') {
+            td.classList.add('tipo-propios');
+          } else if (tipoRecurso === 'ORDENES_SF') {
+            td.classList.add('tipo-terceros');
+          }
+          
+          // Marcar como seleccionado para permitir deselección en próximo click
+          this.dataset.wasChecked = 'true';
+          
+          const tipoRecursoTexto = tipoRecurso === 'ORDENES' ? 'Propios' : 'Terceros';
+          alert(`COPE: ${cope}\nCategoría: ${item.categoria}\nValor: ${item.sub}\nTipo Recurso: ${tipoRecursoTexto}`);
+        });
+        div.appendChild(radio);
+        td.appendChild(div);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+  
+  // ============ FUNCIONALIDAD DE SELECCIÓN TIPO EXCEL ============
+  let selectedCell = null;
+  let isCtrlPressed = false;
+  
+  // Agregar listener a TODAS las celdas TD directamente
+  function aplicarSeleccionCeldas() {
+    console.log('🚀 Ejecutando aplicarSeleccionCeldas...');
+    const todasLasCeldas = document.querySelectorAll('#matriz tbody td');
+    console.log('🔍 Total celdas encontradas:', todasLasCeldas.length);
+    
+    todasLasCeldas.forEach((td, index) => {
+      // Solo si tiene radio button
+      const radio = td.querySelector('input[type="radio"]');
+      if (radio) {
+        td.addEventListener('click', function(e) {
+          
+          // Quitar selección de todas las celdas
+          document.querySelectorAll('#matriz tbody td').forEach(cell => {
+            cell.classList.remove('cell-selected', 'drag-enabled');
+          });
+          
+          // Agregar selección a esta celda
+          this.classList.add('cell-selected');
+          selectedCell = this;
+          
+          // Si Ctrl está presionado, mostrar punto negro inmediatamente
+          if (isCtrlPressed) {
+            this.classList.add('drag-enabled');
+          }
+          
+          // Obtener información de la celda
+          const radioActual = this.querySelector('input[type="radio"]');
+          const radioName = radioActual ? radioActual.name : 'Sin nombre';
+          const radioChecked = radioActual && radioActual.checked ? 'Marcado' : 'No marcado';
+          const tipoClase = this.classList.contains('tipo-propios') ? 'Propios' : 
+                           this.classList.contains('tipo-terceros') ? 'Terceros' : 'Sin tipo';
+          
+          // Obtener COPE de la fila
+          const tr = this.closest('tr');
+          const copeSpan = tr.querySelector('th .cope-header-content span');
+          const cope = copeSpan ? copeSpan.textContent.trim() : 'Desconocido';
+          
+          console.log('📋 Celda seleccionada:', cope, radioName, radioChecked, tipoClase);
+        });
+        
+        // Agregar cursor pointer para indicar que es clickeable
+        td.style.cursor = 'cell';
+      }
+    });
+    
+    console.log('✅ Listeners aplicados a todas las celdas con radio');
+  }
+  
+  // ============ FUNCIONALIDAD DE ARRASTRE TIPO EXCEL ============
+  let dragSourceCell = null;
+  let draggedCells = [];
+  let isDragging = false;
+  
+  // Detectar tecla Control
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Control') {
+      isCtrlPressed = true;
+      console.log('🎮 Control presionado');
+      // Si hay una celda seleccionada, mostrar el punto negro
+      const selected = document.querySelector('.cell-selected');
+      if (selected) {
+        selected.classList.add('drag-enabled');
+        console.log('✅ Punto negro habilitado');
+      }
+    }
+  });
+  
+  document.addEventListener('keyup', function(e) {
+    if (e.key === 'Control') {
+      isCtrlPressed = false;
+      console.log('🎮 Control liberado');
+      // Quitar el punto negro
+      const selected = document.querySelector('.cell-selected');
+      if (selected) {
+        selected.classList.remove('drag-enabled');
+      }
+    }
+  });
+  
+  // Detectar inicio de arrastre desde el punto negro
+  document.getElementById('matriz').addEventListener('mousedown', function(e) {
+    const selected = document.querySelector('.cell-selected.drag-enabled');
+    
+    if (isCtrlPressed && selected) {
+      const rect = selected.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      
+      // Verificar si el click está en la esquina inferior derecha (área del punto negro)
+      const enEsquina = offsetX > rect.width - 15 && offsetY > rect.height - 15;
+      
+      if (enEsquina) {
+        console.log('🎯 Arrastre iniciado desde punto negro');
+        isDragging = true;
+        dragSourceCell = selected;
+        draggedCells = [selected];
+        selected.classList.add('drag-source');
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      }
+    }
+  });
+  
+  // Detectar movimiento sobre celdas
+  document.getElementById('matriz').addEventListener('mousemove', function(e) {
+    if (isDragging && dragSourceCell) {
+      const td = e.target.closest('td');
+      if (td && td !== dragSourceCell && td.querySelector('input[type="radio"]')) {
+        if (!draggedCells.includes(td)) {
+          draggedCells.push(td);
+          td.classList.add('drag-hover');
+          console.log('➕ Celda agregada al arrastre:', draggedCells.length);
+        }
+      }
+    }
+  });
+  
+  // Detectar fin de arrastre
+  document.addEventListener('mouseup', function() {
+    if (isDragging && dragSourceCell && draggedCells.length > 1) {
+      console.log('🏁 Fin del arrastre. Total celdas:', draggedCells.length);
+      
+      const tipoOrigen = dragSourceCell.classList.contains('tipo-propios') ? 'Propios' : 'Terceros';
+      const confirmacion = confirm(
+        `🎨 Copiar Configuración\n\n` +
+        `¿Desea aplicar el tipo de recurso "${tipoOrigen}" a ${draggedCells.length - 1} celda(s) seleccionada(s)?\n\n` +
+        `Esto marcará los radio buttons y aplicará el mismo color.`
+      );
+      
+      if (confirmacion) {
+        const tipoClase = dragSourceCell.classList.contains('tipo-propios') ? 'tipo-propios' : 'tipo-terceros';
+        
+        draggedCells.forEach((cell, index) => {
+          if (index > 0) {
+            const radio = cell.querySelector('input[type="radio"]');
+            if (radio) {
+              radio.checked = true;
+              radio.dataset.wasChecked = 'true';
+              cell.classList.remove('tipo-propios', 'tipo-terceros');
+              cell.classList.add(tipoClase);
+            }
+          }
+        });
+        
+        console.log('✅ Configuración aplicada');
+      }
+    }
+    
+    // Limpiar estados visuales
+    if (isDragging) {
+      draggedCells.forEach(cell => {
+        cell.classList.remove('drag-hover', 'drag-source');
+      });
+    }
+    
+    isDragging = false;
+    dragSourceCell = null;
+    draggedCells = [];
+    document.body.style.userSelect = '';
+  });
+  
+  // ===========================================================================
+  
+  // Inicializar tabla
+  console.log('📊 Generando encabezado...');
+  generarEncabezado();
+  console.log('📊 Generando filas...');
+  generarFilas();
+  console.log('📊 Tabla generada completamente');
+  
+  // Aplicar selección de celdas después de generar la tabla
+  console.log('🎯 Llamando a aplicarSeleccionCeldas...');
+  aplicarSeleccionCeldas();
+  console.log('✅ Script completado');
+  
+  // Cambiar color del selector según la opción seleccionada
+  const tipoRecursoSelect = document.getElementById('tipoRecurso');
+  tipoRecursoSelect.addEventListener('change', function() {
+    this.classList.remove('selected-propios', 'selected-terceros');
+    if (this.value === 'ORDENES') {
+      this.classList.add('selected-propios');
+    } else if (this.value === 'ORDENES_SF') {
+      this.classList.add('selected-terceros');
+    }
+  });
+  
+  // Filtrado por texto de COPE
+  const buscarInput = document.getElementById('buscar');
+  const clearSearchBtn = document.getElementById('clearSearch');
+  
+  function filtrarCopes() {
+    const filtro = buscarInput.value.trim().toLowerCase();
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      const cope = tr.querySelector('th').textContent.toLowerCase();
+      tr.style.display = cope.includes(filtro) ? '' : 'none';
+    });
+    // Mostrar/ocultar botón de limpiar
+    clearSearchBtn.classList.toggle('visible', filtro.length > 0);
+  }
+  
+  buscarInput.addEventListener('input', filtrarCopes);
+  
+  // Limpiar búsqueda
+  clearSearchBtn.addEventListener('click', () => {
+    buscarInput.value = '';
+    filtrarCopes();
+    buscarInput.focus();
+  });
+
+  // Guardar (serializa selección y muestra modal)
+  document.getElementById('btnGuardar').addEventListener('click', () => {
+    const data = [];
+    
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      // Obtener el texto del COPE sin el botón de limpiar
+      const copeSpan = tr.querySelector('th .cope-header-content span');
+      const cope = copeSpan ? copeSpan.textContent.trim() : tr.querySelector('th').textContent.trim();
+      
+      subcategorias.forEach(item => {
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const seleccionado = tr.querySelector(`input[name="${radioName}"]:checked`);
+        
+        if (seleccionado) {
+          // Obtener el tipo de recurso de la celda (basado en su clase CSS)
+          const celda = seleccionado.closest('td');
+          let tipoRecurso = 'Sin asignar';
+          
+          if (celda.classList.contains('tipo-propios')) {
+            tipoRecurso = 'Propios';
+          } else if (celda.classList.contains('tipo-terceros')) {
+            tipoRecurso = 'Terceros';
+          }
+          
+          data.push({
+            COPE: cope,
+            Categoria: item.categoria,
+            Valor: item.sub,
+            TipoDeRecurso: tipoRecurso
+          });
+        }
+      });
+    });
+    
+    const salida = JSON.stringify({
+      division: document.getElementById('division').value,
+      area: document.getElementById('area').value,
+      cope: document.getElementById('cope').value,
+      selecciones: data,
+      totalSelecciones: data.length
+    }, null, 2);
+    
+    // Mostrar en modal
+    document.getElementById('jsonContent').textContent = salida;
+    document.getElementById('modalJSON').classList.add('visible');
+  });
+  
+  // Cerrar modal
+  function cerrarModal() {
+    document.getElementById('modalJSON').classList.remove('visible');
+  }
+  
+  document.getElementById('modalClose').addEventListener('click', cerrarModal);
+  document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
+  
+  // Cerrar modal al hacer clic fuera del contenido
+  document.getElementById('modalJSON').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModal();
+    }
+  });
+  
+  // Limpiar todos los radio buttons
+  document.getElementById('btnLimpiar').addEventListener('click', () => {
+    const confirmacion = confirm('⚠️ ATENCIÓN\n\n¿Está seguro que desea eliminar TODAS las selecciones de radio buttons?\n\nEsta acción no se puede deshacer.\n\nPresione "Aceptar" para continuar o "Cancelar" para mantener las selecciones.');
+    
+    if (confirmacion) {
+      // Deseleccionar todos los radio buttons
+      document.querySelectorAll('#matriz tbody input[type="radio"]:checked').forEach(radio => {
+        radio.checked = false;
+        radio.dataset.wasChecked = 'false';
+      });
+      
+      // Quitar todos los colores de las celdas
+      document.querySelectorAll('#matriz tbody td.tipo-propios, #matriz tbody td.tipo-terceros').forEach(celda => {
+        celda.classList.remove('tipo-propios', 'tipo-terceros');
+      });
+      
+      alert('✅ Todas las selecciones han sido eliminadas correctamente.');
+    }
+  });
+</script>
+</body>
+</html>
