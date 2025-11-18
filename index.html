@@ -1,8 +1,10 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8" />
-<title>Matriz Asignación Electronica</title>
+<title>Asignación Electronica Por COPE</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <style>
 :root {
@@ -621,7 +623,7 @@ button.limpiar:active { transform: scale(.97); }
   
   // Definición de subcolumnas por categoría (modificar según necesidad)
   // Formato: [['codigo', 'TIPO'], ...] donde TIPO puede ser 'ORDENES' o 'ORDENES_SF'
-  const columnasAltas = [['A0','ORDENES'], ['AT','ORDENES_SF']]; // Puede agregar: ['A1','ORDENES'], etc.
+  const columnasAltas = [['A0','ORDENES'],['A9','ORDENES'], ['AT','ORDENES_SF']]; // Puede agregar: ['A1','ORDENES'], etc.
   const columnasCambioDomicilio = [['D1','ORDENES'], ['D2','ORDENES_SF'], ['D3','ORDENES']]; // Puede agregar más
   const columnasMigraciones = [['TS','ORDENES'],['TV','ORDENES_SF']]; // Puede agregar más si es necesario
   
@@ -1203,5 +1205,4 @@ button.limpiar:active { transform: scale(.97); }
 </script>
 </body>
 </html>
-
 
