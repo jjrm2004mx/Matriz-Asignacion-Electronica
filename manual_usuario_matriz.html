@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -304,6 +306,44 @@ footer {
     <div class="warning">
       <strong>⚠️ Atención:</strong> Las acciones de limpiar requieren confirmación. El sistema le pedirá que confirme antes de eliminar las selecciones.
     </div>
+
+    <h3>📊 Exportar a CSV</h3>
+    <p>El sistema permite exportar todas las configuraciones realizadas en un archivo CSV (valores separados por comas), ideal para análisis en Excel o importación a otros sistemas.</p>
+    
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en <span class="icon">📊</span> Exportar CSV</strong>
+      <p style="margin: 8px 0 0 36px;">Localice el botón verde <strong>📊 Exportar CSV</strong> en la parte inferior de la matriz</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Validación de datos</strong>
+      <p style="margin: 8px 0 0 36px;">Si no hay selecciones en la matriz, el sistema mostrará un mensaje indicando que no hay datos para exportar</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Descarga automática</strong>
+      <p style="margin: 8px 0 0 36px;">
+        El archivo CSV se descargará automáticamente con un nombre que incluye:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>Prefijo: <code>matriz_asignacion_</code></li>
+        <li>Fecha actual (formato: YYYY-MM-DD)</li>
+        <li>División seleccionada (si aplica)</li>
+        <li>Área seleccionada (si aplica)</li>
+        <li>Ejemplo: <code>matriz_asignacion_2025-11-17_Division_Norte_Red.csv</code></li>
+      </ul>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Formato del archivo CSV:</strong> El archivo contiene 4 columnas: COPE, Categoria, Subcategoria, TipoRecurso. Cada fila representa una selección realizada en la matriz, con el tipo de recurso (Propios o Terceros) asociado.
+    </div>
+
+    <div class="tip">
+      <strong>💡 Uso en Excel:</strong> Puede abrir el archivo directamente en Microsoft Excel o Google Sheets. Los datos estarán organizados en columnas para facilitar análisis, filtrado y creación de reportes.
+    </div>
   </div>
 
   <!-- SECCIÓN 5: GUARDAR -->
@@ -361,6 +401,22 @@ footer {
 
     <h3>🔍 No encuentro un COPE específico</h3>
     <p><strong>Solución:</strong> Use el campo de búsqueda en la parte superior. Si aplicó un filtro anteriormente, haga clic en el botón <strong>✕</strong> para limpiar la búsqueda.</p>
+
+    <h3>📊 El archivo CSV no se descarga</h3>
+    <p><strong>Solución:</strong> Verifique que:</p>
+    <ul>
+      <li>Tenga al menos una selección marcada en la matriz</li>
+      <li>Su navegador permita descargas automáticas (revise la configuración de bloqueo de descargas)</li>
+      <li>No haya bloqueadores de pop-ups que impidan la descarga</li>
+    </ul>
+
+    <h3>📄 El archivo CSV se ve mal en Excel</h3>
+    <p><strong>Solución:</strong> El archivo está codificado en UTF-8. Si ve caracteres extraños:</p>
+    <ul>
+      <li>En Excel: Use <strong>Datos > Obtener datos externos > Desde texto/CSV</strong> y seleccione codificación UTF-8</li>
+      <li>En Google Sheets: El archivo se importará correctamente de forma automática</li>
+      <li>Alternativamente, puede abrir el archivo con un editor de texto y guardarlo con otra codificación</li>
+    </ul>
   </div>
 
   <!-- SECCIÓN 7: ATAJOS DE TECLADO -->
@@ -377,7 +433,7 @@ footer {
   <footer>
     <p><strong>Sistema de Matriz de Asignación Electrónica</strong></p>
     <p>Para soporte técnico o consultas, contacte al administrador del sistema</p>
-    <p style="margin-top: 10px; color: #999;">Versión 1.0 | Última actualización: Noviembre 2025</p>
+    <p style="margin-top: 10px; color: #999;">Versión 1.1 | Última actualización: Noviembre 2025</p>
   </footer>
 </div>
 </body>
