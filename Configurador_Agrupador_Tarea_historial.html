@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Configurador de Agrupador de Tareas - Área de Soporte</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-header-bg: #0a6cbd;
+  --color-header-text: #ffffff;
+  --color-border: #d1d9e0;
+  --color-success: #4caf50;
+  --color-danger: #f44336;
+  --radius: 6px;
+  --font-stack: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-stack);
+  margin: 0;
+  background: #f5f7fa;
+  color: #222;
+}
+
+header {
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-header-text);
+  padding: 24px 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+main {
+  max-width: 1400px;
+  margin: 32px auto;
+  padding: 0 32px;
+}
+
+.config-section {
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+.section-header {
+  background: #f8f9fa;
+  padding: 16px 24px;
+  border-bottom: 2px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-header h2 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-body {
+  padding: 24px;
+}
+
+.categorias-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.categoria-card {
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.categoria-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(5, 98, 177, 0.15);
+  transform: translateY(-2px);
+}
+
+.categoria-card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.categoria-card p {
+  margin: 0 0 16px 0;
+  font-size: 13px;
+  color: #666;
+  line-height: 1.5;
+}
+
+.categoria-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #888;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  border: none;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-success {
+  background: var(--color-success);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 8px;
+}
+
+.btn-success:hover {
+  background: #388e3c;
+}
+
+.btn-add {
+  background: var(--color-success);
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add:hover {
+  background: #388e3c;
+  transform: scale(1.1);
+}
+
+/* Modal Styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  padding: 20px 24px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-header-text);
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* Tipos de Órdenes Styles */
+.tipos-container {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: var(--radius);
+}
+
+.tipos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tipos-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #333;
+}
+
+.tipos-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tipo-item {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.tipo-item:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(4px);
+}
+
+.tipo-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tipo-codigo {
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-primary);
+}
+
+.tipo-descripcion {
+  font-size: 13px;
+  color: #666;
+}
+
+.tipo-badge {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 12px;
+}
+
+.tipo-badge.propios {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #2196f3;
+}
+
+.tipo-badge.terceros {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #4caf50;
+}
+
+.btn-delete {
+  background: var(--color-danger);
+  color: white;
+  border: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+}
+
+.btn-config-etapas {
+  background: #ff9800;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 12px;
+  transition: all 0.2s ease;
+}
+
+.btn-config-etapas:hover {
+  background: #f57c00;
+}
+
+/* Etapas Styles */
+.etapas-container {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: var(--radius);
+}
+
+.etapas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.etapas-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #c62828;
+}
+
+.etapas-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.etapa-item {
+  background: #ffffff;
+  border-left: 4px solid var(--color-danger);
+  border-radius: 4px;
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.etapa-item:hover {
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.etapa-codigo {
+  font-weight: 700;
+  color: #c62828;
+  margin-right: 8px;
+}
+
+.etapa-descripcion {
+  flex: 1;
+  color: #333;
+  font-size: 13px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #999;
+  font-style: italic;
+}
+
+.actions-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid var(--color-border);
+}
+
+/* Help Icon Styles */
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border: 2px solid #2e7d32;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.help-icon:hover {
+  background: #388e3c;
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+.help-icon:active {
+  transform: scale(0.95);
+}
+
+/* Help Modal Styles */
+.modal-content.modal-ayuda {
+  width: 80vw;
+  max-width: 80vw;
+  height: 80vh;
+  max-height: 80vh;
+}
+
+.modal-ayuda-body {
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.modal-ayuda-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.btn-fullscreen {
+  background: transparent;
+  border: none;
+  color: var(--color-header-text);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+  margin-right: 8px;
+}
+
+.btn-fullscreen:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-content.fullscreen {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+}
+
+/* Estilos para Modal de Historial */
+.modal-content.modal-historial {
+  width: 90vw;
+  max-width: 1200px;
+  max-height: 85vh;
+}
+
+.timeline-container {
+  position: relative;
+  padding-left: 40px;
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: 30px;
+  border-left: 2px solid #0562b1;
+  padding-left: 25px;
+  margin-left: 10px;
+}
+
+.timeline-item:last-child {
+  border-left: 2px solid transparent;
+}
+
+.timeline-marker {
+  position: absolute;
+  left: -11px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0562b1;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 3px #e3f2fd;
+}
+
+.timeline-content {
+  background: #f8f9fa;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  padding: 15px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d1d9e0;
+}
+
+.timeline-id {
+  font-weight: 700;
+  color: #0562b1;
+  font-size: 14px;
+}
+
+.timeline-categoria {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.timeline-categoria.altas {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.timeline-categoria.cambiodomicilio {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.timeline-categoria.migraciones {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.timeline-fecha {
+  font-size: 12px;
+  color: #666;
+}
+
+.timeline-usuario {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+
+.timeline-detalles {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.timeline-detalles strong {
+  color: #333;
+}
+
+.cambio-item {
+  background: #ffffff;
+  border-left: 3px solid #4caf50;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+
+.cambio-item.modificado {
+  border-left-color: #ff9800;
+}
+
+.cambio-label {
+  font-weight: 600;
+  color: #333;
+  margin-right: 6px;
+}
+
+.cambio-anterior {
+  text-decoration: line-through;
+  color: #f44336;
+  margin-right: 8px;
+}
+
+.cambio-nuevo {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.historial-empty {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+
+.historial-loading {
+  text-align: center;
+  padding: 40px;
+  color: #0562b1;
+}
+
+.filtro-historial {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.filtro-historial select {
+  padding: 8px 12px;
+  border: 1px solid #d1d9e0;
+  border-radius: 4px;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+  <header>
+    <h1>⚙️ Configurador de Agrupador de Tareas
+      <a href="#" class="help-icon" title="Ver Historial de Cambios" id="btnHistorialGlobal" style="background: #ff9800; border-color: #f57c00;">🕐</a>
+      <a href="#" class="help-icon" title="Manual de Usuario" id="btnAyuda">?</a>
+    </h1>
+    <p>Área de Soporte - Configuración de Tipos de Órdenes y Etapas Excluidas</p>
+  </header>
+
+  <main>
+    <!-- Sección de Categorías -->
+    <div class="config-section">
+      <div class="section-header">
+        <h2>📋 Categorías de Órdenes</h2>
+      </div>
+      <div class="section-body">
+        <div class="categorias-grid">
+          <!-- Altas -->
+          <div class="categoria-card" onclick="abrirModalTiposOrden('Altas')">
+            <h3>📈 Altas</h3>
+            <p>Configurar tipos de órdenes para procesos de alta de servicios</p>
+            <div class="categoria-stats">
+              <div class="stat-item">
+                <span>📊</span>
+                <span id="statsAltas">0 tipos configurados</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cambio de Domicilio -->
+          <div class="categoria-card" onclick="abrirModalTiposOrden('CambioDomicilio')">
+            <h3>🏠 Cambio de Domicilio</h3>
+            <p>Configurar tipos de órdenes para cambios de dirección y traslados</p>
+            <div class="categoria-stats">
+              <div class="stat-item">
+                <span>📊</span>
+                <span id="statsCambioDomicilio">0 tipos configurados</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Migraciones -->
+          <div class="categoria-card" onclick="abrirModalTiposOrden('Migraciones')">
+            <h3>🔄 Migraciones</h3>
+            <p>Configurar tipos de órdenes para migración de servicios y tecnologías</p>
+            <div class="categoria-stats">
+              <div class="stat-item">
+                <span>📊</span>
+                <span id="statsMigraciones">0 tipos configurados</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla de Resumen General -->
+    <div class="config-section">
+      <div class="section-header">
+        <h2>📊 Resumen General de Configuración</h2>
+      </div>
+      <div class="section-body">
+        <div style="overflow-x: auto;">
+          <table id="tablaResumen" style="width: 100%; border-collapse: collapse; font-size: 13px;">
+            <thead>
+              <tr style="background: var(--color-primary); color: white;">
+                <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Categoría</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Código</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Descripción</th>
+                <th style="padding: 12px; text-align: center; border: 1px solid var(--color-border);">Tipo</th>
+                <th style="padding: 12px; text-align: left; border: 1px solid var(--color-border);">Etapas Excluidas</th>
+              </tr>
+            </thead>
+            <tbody id="cuerpoTablaResumen">
+              <!-- Se llenará dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones Globales -->
+    <div class="actions-bar">
+      <button class="btn-success" onclick="exportarConfiguracionCSV()">📄 Exportar Configuración (CSV)</button>
+      <button class="btn-primary" onclick="guardarConfiguracion()">💾 Guardar (JSON)</button>
+    </div>
+  </main>
+
+  <!-- Modal: Tipos de Órdenes -->
+  <div class="modal-overlay" id="modalTiposOrden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tituloModalTipos">📑 Tipos de Órdenes</h3>
+        <button class="modal-close" onclick="cerrarModalTiposOrden()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tipos-container">
+          <div class="tipos-header">
+            <h4>Tipos de Órdenes Configurados</h4>
+            <button class="btn-add" onclick="agregarTipoOrden()" title="Agregar tipo de orden">+</button>
+          </div>
+          <ul class="tipos-lista" id="listaTiposOrden"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-success" onclick="guardarTiposOrden()">💾 Guardar</button>
+        <button class="btn-primary" onclick="cerrarModalTiposOrden()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: JSON Preview -->
+  <div class="modal-overlay" id="modalJSON">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📋 Resultado JSON</h3>
+        <button class="modal-close" onclick="cerrarModalJSON()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <pre id="jsonContent" style="background: #f5f7fa; padding: 16px; border-radius: 4px; overflow: auto; max-height: 500px; font-size: 12px; line-height: 1.5;"></pre>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-success" onclick="descargarJSON()">💾 Descargar JSON</button>
+        <button class="btn-primary" onclick="cerrarModalJSON()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Etapas Excluidas -->
+  <div class="modal-overlay" id="modalEtapas">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tituloModalEtapas">❌ Etapas Excluidas</h3>
+        <button class="modal-close" onclick="cerrarModalEtapas()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="etapas-container">
+          <div class="etapas-header">
+            <h4>Etapas Excluidas</h4>
+            <button class="btn-add" onclick="agregarEtapa()" title="Agregar etapa excluida">+</button>
+          </div>
+          <ul class="etapas-lista" id="listaEtapas"></ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-success" onclick="guardarEtapas()">💾 Guardar</button>
+        <button class="btn-primary" onclick="cerrarModalEtapas()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Manual de Usuario -->
+  <div class="modal-overlay" id="modalAyuda">
+    <div class="modal-content modal-ayuda" id="modalAyudaContent">
+      <div class="modal-header">
+        <h3>📖 Manual de Usuario</h3>
+        <div style="display: flex; align-items: center;">
+          <button class="btn-fullscreen" id="btnFullscreen" title="Pantalla completa">⛶</button>
+          <button class="modal-close" id="modalAyudaClose" title="Cerrar">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body modal-ayuda-body">
+        <iframe id="iframeAyuda" src="" frameborder="0"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btnCerrarModalAyuda">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Historial Global de Auditoría -->
+  <div class="modal-overlay" id="modalHistorialGlobal">
+    <div class="modal-content modal-historial" id="modalHistorialGlobalContent">
+      <div class="modal-header">
+        <h3>🕐 Historial Global de Cambios en Configuración</h3>
+        <button class="modal-close" id="modalHistorialGlobalClose" title="Cerrar">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="filtro-historial">
+          <select id="filtroCategoriaHistorial">
+            <option value="">Todas las Categorías</option>
+            <option value="Altas">Altas</option>
+            <option value="CambioDomicilio">Cambio de Domicilio</option>
+            <option value="Migraciones">Migraciones</option>
+          </select>
+          <select id="filtroUsuarioHistorial">
+            <option value="">Todos los Usuarios</option>
+          </select>
+          <button class="btn-primary" onclick="aplicarFiltrosHistorial()">🔍 Filtrar</button>
+        </div>
+        <div id="historialGlobalContenido" class="timeline-container">
+          <div class="historial-loading">🔄 Cargando historial completo...</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="btnCerrarModalHistorialGlobal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ============ DATOS DE CONFIGURACIÓN ============
+  const configuracion = {
+    'Altas': [
+      { codigo: 'A0', descripcion: 'Alta Normal', tipo: 'ORDENES', etapasExcluidas: [
+        { codigo: 'PQ', descripcion: 'Etapa Mantenimiento PQ' },
+        { codigo: 'PM', descripcion: 'Etapa Mantenimiento PM' }
+      ]},
+      { codigo: 'A9', descripcion: 'Alta Express', tipo: 'ORDENES', etapasExcluidas: [] },
+      { codigo: 'AT', descripcion: 'Alta con Análisis Técnico', tipo: 'ORDENES_SF', etapasExcluidas: [] }
+    ],
+    'CambioDomicilio': [
+      { codigo: 'D1', descripcion: 'Cambio con Traslado de Equipo', tipo: 'ORDENES', etapasExcluidas: [] },
+      { codigo: 'D2', descripcion: 'Cambio Solo Dirección', tipo: 'ORDENES_SF', etapasExcluidas: [] },
+      { codigo: 'D3', descripcion: 'Cambio Interno', tipo: 'ORDENES', etapasExcluidas: [] }
+    ],
+    'Migraciones': [
+      { codigo: 'TS', descripcion: 'Migración de Servicio', tipo: 'ORDENES', etapasExcluidas: [] },
+      { codigo: 'TV', descripcion: 'Migración Virtual', tipo: 'ORDENES_SF', etapasExcluidas: [] }
+    ]
+  };
+
+  let categoriaActual = null;
+  let tipoOrdenActual = null;
+
+  // ============ INICIALIZACIÓN ============
+  function inicializar() {
+    actualizarEstadisticas();
+    renderizarTablaResumen();
+  }
+
+  function actualizarEstadisticas() {
+    document.getElementById('statsAltas').textContent = `${configuracion.Altas.length} tipos configurados`;
+    document.getElementById('statsCambioDomicilio').textContent = `${configuracion.CambioDomicilio.length} tipos configurados`;
+    document.getElementById('statsMigraciones').textContent = `${configuracion.Migraciones.length} tipos configurados`;
+  }
+
+  // ============ TABLA RESUMEN ============
+  function renderizarTablaResumen() {
+    const tbody = document.getElementById('cuerpoTablaResumen');
+    tbody.innerHTML = '';
+
+    const nombresCategoria = {
+      'Altas': '📈 Altas',
+      'CambioDomicilio': '🏠 Cambio de Domicilio',
+      'Migraciones': '🔄 Migraciones'
+    };
+
+    Object.keys(configuracion).forEach(categoria => {
+      const tipos = configuracion[categoria];
+      
+      tipos.forEach((tipo, index) => {
+        const tr = document.createElement('tr');
+        tr.style.background = index % 2 === 0 ? '#ffffff' : '#f9fafb';
+        tr.style.transition = 'background 0.2s';
+        tr.onmouseover = () => tr.style.background = '#e3f2fd';
+        tr.onmouseout = () => tr.style.background = index % 2 === 0 ? '#ffffff' : '#f9fafb';
+
+        // Categoría
+        const tdCategoria = document.createElement('td');
+        tdCategoria.style.padding = '12px';
+        tdCategoria.style.border = '1px solid var(--color-border)';
+        tdCategoria.style.fontWeight = '600';
+        tdCategoria.style.color = 'var(--color-primary)';
+        tdCategoria.textContent = nombresCategoria[categoria];
+
+        // Código
+        const tdCodigo = document.createElement('td');
+        tdCodigo.style.padding = '12px';
+        tdCodigo.style.border = '1px solid var(--color-border)';
+        tdCodigo.style.fontWeight = '700';
+        tdCodigo.style.fontSize = '14px';
+        tdCodigo.textContent = tipo.codigo;
+
+        // Descripción
+        const tdDescripcion = document.createElement('td');
+        tdDescripcion.style.padding = '12px';
+        tdDescripcion.style.border = '1px solid var(--color-border)';
+        tdDescripcion.textContent = tipo.descripcion;
+
+        // Tipo
+        const tdTipo = document.createElement('td');
+        tdTipo.style.padding = '12px';
+        tdTipo.style.border = '1px solid var(--color-border)';
+        tdTipo.style.textAlign = 'center';
+        const spanTipo = document.createElement('span');
+        spanTipo.className = 'tipo-badge ' + (tipo.tipo === 'ORDENES' ? 'propios' : 'terceros');
+        spanTipo.textContent = tipo.tipo === 'ORDENES' ? 'Propios' : 'Terceros';
+        spanTipo.style.display = 'inline-block';
+        tdTipo.appendChild(spanTipo);
+
+        // Etapas Excluidas
+        const tdEtapas = document.createElement('td');
+        tdEtapas.style.padding = '12px';
+        tdEtapas.style.border = '1px solid var(--color-border)';
+        
+        if (tipo.etapasExcluidas && tipo.etapasExcluidas.length > 0) {
+          const etapasTexto = tipo.etapasExcluidas.map(e => `${e.codigo}: ${e.descripcion}`).join(' • ');
+          tdEtapas.innerHTML = `<span style="color: #c62828; font-size: 12px;">${etapasTexto}</span>`;
+        } else {
+          tdEtapas.innerHTML = '<span style="color: #999; font-style: italic;">Sin etapas excluidas</span>';
+        }
+
+        tr.appendChild(tdCategoria);
+        tr.appendChild(tdCodigo);
+        tr.appendChild(tdDescripcion);
+        tr.appendChild(tdTipo);
+        tr.appendChild(tdEtapas);
+
+        tbody.appendChild(tr);
+      });
+    });
+  }
+
+  // ============ MODAL TIPOS DE ÓRDENES ============
+  function abrirModalTiposOrden(categoria) {
+    categoriaActual = categoria;
+    const nombreCategoria = categoria === 'CambioDomicilio' ? 'Cambio de Domicilio' : categoria;
+    document.getElementById('tituloModalTipos').textContent = `📑 Tipos de Órdenes: ${nombreCategoria}`;
+    renderizarTiposOrden();
+    document.getElementById('modalTiposOrden').classList.add('visible');
+  }
+
+  function cerrarModalTiposOrden() {
+    document.getElementById('modalTiposOrden').classList.remove('visible');
+    categoriaActual = null;
+  }
+
+  function renderizarTiposOrden() {
+    const lista = document.getElementById('listaTiposOrden');
+    lista.innerHTML = '';
+
+    const tipos = configuracion[categoriaActual];
+
+    if (tipos && tipos.length > 0) {
+      tipos.forEach((tipo, index) => {
+        const li = document.createElement('li');
+        li.className = 'tipo-item';
+
+        const divInfo = document.createElement('div');
+        divInfo.className = 'tipo-info';
+
+        const divCodigo = document.createElement('div');
+        divCodigo.className = 'tipo-codigo';
+        divCodigo.textContent = tipo.codigo;
+
+        const divDescripcion = document.createElement('div');
+        divDescripcion.className = 'tipo-descripcion';
+        divDescripcion.textContent = tipo.descripcion;
+
+        divInfo.appendChild(divCodigo);
+        divInfo.appendChild(divDescripcion);
+
+        const badge = document.createElement('span');
+        badge.className = 'tipo-badge ' + (tipo.tipo === 'ORDENES' ? 'propios' : 'terceros');
+        badge.textContent = tipo.tipo === 'ORDENES' ? 'Propios' : 'Terceros';
+
+        const btnEtapas = document.createElement('button');
+        btnEtapas.className = 'btn-config-etapas';
+        btnEtapas.textContent = '⚙️ Etapas';
+        btnEtapas.onclick = (e) => {
+          e.stopPropagation();
+          abrirModalEtapas(index);
+        };
+
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete';
+        btnDelete.innerHTML = '×';
+        btnDelete.onclick = () => eliminarTipoOrden(index);
+
+        li.appendChild(divInfo);
+        li.appendChild(badge);
+        li.appendChild(btnEtapas);
+        li.appendChild(btnDelete);
+
+        lista.appendChild(li);
+      });
+    } else {
+      lista.innerHTML = '<div class="empty-state">No hay tipos de órdenes configurados</div>';
+    }
+  }
+
+  function agregarTipoOrden() {
+    const codigo = prompt('Ingrese el código del tipo de orden (ej: A0, D1):');
+    if (!codigo || codigo.trim() === '') return;
+
+    const descripcion = prompt('Ingrese la descripción:');
+    if (!descripcion || descripcion.trim() === '') return;
+
+    const esPropios = confirm('¿Es de tipo PROPIOS?\n\nAceptar = Propios (ORDENES)\nCancelar = Terceros (ORDENES_SF)');
+
+    configuracion[categoriaActual].push({
+      codigo: codigo.trim().toUpperCase(),
+      descripcion: descripcion.trim(),
+      tipo: esPropios ? 'ORDENES' : 'ORDENES_SF',
+      etapasExcluidas: []
+    });
+
+    renderizarTiposOrden();
+    actualizarEstadisticas();
+  }
+
+  function eliminarTipoOrden(index) {
+    if (confirm('¿Está seguro que desea eliminar este tipo de orden?')) {
+      configuracion[categoriaActual].splice(index, 1);
+      renderizarTiposOrden();
+      actualizarEstadisticas();
+    }
+  }
+
+  function guardarTiposOrden() {
+    alert('✅ Tipos de órdenes guardados correctamente');
+    renderizarTablaResumen();
+    cerrarModalTiposOrden();
+  }
+
+  // ============ MODAL ETAPAS EXCLUIDAS ============
+  function abrirModalEtapas(indexTipo) {
+    tipoOrdenActual = indexTipo;
+    const tipo = configuracion[categoriaActual][indexTipo];
+    document.getElementById('tituloModalEtapas').textContent = `❌ Etapas Excluidas: ${tipo.codigo}`;
+    renderizarEtapas();
+    document.getElementById('modalEtapas').classList.add('visible');
+  }
+
+  function cerrarModalEtapas() {
+    document.getElementById('modalEtapas').classList.remove('visible');
+    tipoOrdenActual = null;
+  }
+
+  function renderizarEtapas() {
+    const lista = document.getElementById('listaEtapas');
+    lista.innerHTML = '';
+
+    const etapas = configuracion[categoriaActual][tipoOrdenActual].etapasExcluidas;
+
+    if (etapas && etapas.length > 0) {
+      etapas.forEach((etapa, index) => {
+        const li = document.createElement('li');
+        li.className = 'etapa-item';
+
+        const spanCodigo = document.createElement('span');
+        spanCodigo.className = 'etapa-codigo';
+        spanCodigo.textContent = etapa.codigo + ':';
+
+        const spanDescripcion = document.createElement('span');
+        spanDescripcion.className = 'etapa-descripcion';
+        spanDescripcion.textContent = etapa.descripcion;
+
+        const btnDelete = document.createElement('button');
+        btnDelete.className = 'btn-delete';
+        btnDelete.innerHTML = '×';
+        btnDelete.onclick = () => eliminarEtapa(index);
+
+        li.appendChild(spanCodigo);
+        li.appendChild(spanDescripcion);
+        li.appendChild(btnDelete);
+
+        lista.appendChild(li);
+      });
+    } else {
+      lista.innerHTML = '<div class="empty-state">No hay etapas excluidas configuradas</div>';
+    }
+  }
+
+  function agregarEtapa() {
+    const codigo = prompt('Ingrese el código de la etapa (ej: PQ, PM):');
+    if (!codigo || codigo.trim() === '') return;
+
+    const descripcion = prompt('Ingrese la descripción de la etapa:');
+    if (!descripcion || descripcion.trim() === '') return;
+
+    configuracion[categoriaActual][tipoOrdenActual].etapasExcluidas.push({
+      codigo: codigo.trim().toUpperCase(),
+      descripcion: descripcion.trim()
+    });
+
+    renderizarEtapas();
+  }
+
+  function eliminarEtapa(index) {
+    if (confirm('¿Está seguro que desea eliminar esta etapa excluida?')) {
+      configuracion[categoriaActual][tipoOrdenActual].etapasExcluidas.splice(index, 1);
+      renderizarEtapas();
+    }
+  }
+
+  function guardarEtapas() {
+    alert('✅ Etapas excluidas guardadas correctamente');
+    renderizarTablaResumen();
+    cerrarModalEtapas();
+  }
+
+  // ============ EXPORTAR Y GUARDAR ============
+  function guardarConfiguracion() {
+    // Preparar datos para JSON
+    const data = [];
+    
+    Object.keys(configuracion).forEach(categoria => {
+      const tipos = configuracion[categoria];
+      
+      tipos.forEach(tipo => {
+        data.push({
+          Categoria: categoria,
+          Codigo: tipo.codigo,
+          Descripcion: tipo.descripcion,
+          Tipo: tipo.tipo,
+          EtapasExcluidas: tipo.etapasExcluidas || []
+        });
+      });
+    });
+    
+    const salida = JSON.stringify({
+      fechaExportacion: new Date().toISOString(),
+      totalRegistros: data.length,
+      configuraciones: data
+    }, null, 2);
+    
+    // Mostrar en modal
+    document.getElementById('jsonContent').textContent = salida;
+    document.getElementById('modalJSON').classList.add('visible');
+    
+    console.log('💾 Configuración preparada para guardar:', configuracion);
+  }
+  
+  function cerrarModalJSON() {
+    document.getElementById('modalJSON').classList.remove('visible');
+  }
+  
+  function descargarJSON() {
+    const jsonText = document.getElementById('jsonContent').textContent;
+    const blob = new Blob([jsonText], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `configuracion_agrupador_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Archivo JSON descargado exitosamente');
+  }
+
+  function exportarConfiguracionCSV() {
+    // Construir CSV
+    let csv = 'Categoría,Código,Descripción,Tipo,Etapas Excluidas\n';
+    
+    const nombresCategoria = {
+      'Altas': 'Altas',
+      'CambioDomicilio': 'Cambio de Domicilio',
+      'Migraciones': 'Migraciones'
+    };
+
+    Object.keys(configuracion).forEach(categoria => {
+      const tipos = configuracion[categoria];
+      
+      tipos.forEach(tipo => {
+        const etapasTexto = tipo.etapasExcluidas && tipo.etapasExcluidas.length > 0
+          ? tipo.etapasExcluidas.map(e => `${e.codigo}: ${e.descripcion}`).join(' | ')
+          : 'Sin etapas excluidas';
+        
+        const tipoTexto = tipo.tipo === 'ORDENES' ? 'Propios' : 'Terceros';
+        
+        csv += `"${nombresCategoria[categoria]}","${tipo.codigo}","${tipo.descripcion}","${tipoTexto}","${etapasTexto}"\n`;
+      });
+    });
+
+    // Descargar CSV
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `configuracion_agrupador_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    
+    console.log('📄 Configuración exportada a CSV');
+    alert('✅ Configuración exportada exitosamente en formato CSV');
+  }
+
+  // Cerrar modales al hacer clic fuera
+  document.getElementById('modalTiposOrden').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalTiposOrden();
+  });
+
+  document.getElementById('modalEtapas').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalEtapas();
+  });
+
+  document.getElementById('modalJSON').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalJSON();
+  });
+
+  // ============ MODAL AYUDA ============
+  // Abrir modal de ayuda
+  document.getElementById('btnAyuda').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('iframeAyuda').src = 'Manual_Configurador_Agrupador.html';
+    document.getElementById('modalAyuda').classList.add('visible');
+  });
+
+  // Pantalla completa para modal de ayuda
+  document.getElementById('btnFullscreen').addEventListener('click', () => {
+    const modalContent = document.getElementById('modalAyudaContent');
+    modalContent.classList.toggle('fullscreen');
+    
+    // Cambiar icono según el estado
+    const btn = document.getElementById('btnFullscreen');
+    if (modalContent.classList.contains('fullscreen')) {
+      btn.innerHTML = '⧉'; // Icono de salir de pantalla completa
+      btn.title = 'Salir de pantalla completa';
+    } else {
+      btn.innerHTML = '⛶'; // Icono de pantalla completa
+      btn.title = 'Pantalla completa';
+    }
+  });
+
+  // Cerrar modal de ayuda
+  function cerrarModalAyuda() {
+    document.getElementById('modalAyuda').classList.remove('visible');
+    document.getElementById('iframeAyuda').src = '';
+    // Restaurar tamaño normal al cerrar
+    const modalContent = document.getElementById('modalAyudaContent');
+    modalContent.classList.remove('fullscreen');
+    document.getElementById('btnFullscreen').innerHTML = '⛶';
+    document.getElementById('btnFullscreen').title = 'Pantalla completa';
+  }
+
+  document.getElementById('modalAyudaClose').addEventListener('click', cerrarModalAyuda);
+  document.getElementById('btnCerrarModalAyuda').addEventListener('click', cerrarModalAyuda);
+
+  // Cerrar modal de ayuda al hacer clic fuera del contenido
+  document.getElementById('modalAyuda').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModalAyuda();
+    }
+  });
+
+  // ============ FUNCIONES DE HISTORIAL GLOBAL ============
+  
+  /**
+   * Abrir modal de historial global
+   */
+  document.getElementById('btnHistorialGlobal').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('historialGlobalContenido').innerHTML = '<div class="historial-loading">🔄 Cargando historial completo...</div>';
+    document.getElementById('modalHistorialGlobal').classList.add('visible');
+    
+    // Cargar usuarios únicos para el filtro
+    cargarFiltroUsuarios();
+    
+    // Cargar historial después de un breve delay
+    setTimeout(() => {
+      cargarHistorialGlobal();
+    }, 500);
+  });
+  
+  /**
+   * Cargar usuarios únicos para el filtro
+   */
+  function cargarFiltroUsuarios() {
+    // En producción, esto vendría de: SELECT DISTINCT USUARIO_REGISTRO FROM MATRIZ_ASIGNACION_AUDITORIA
+    const usuarios = ['admin', 'jperez', 'mgomez', 'alopez', 'mrodriguez'];
+    
+    const select = document.getElementById('filtroUsuarioHistorial');
+    select.innerHTML = '<option value="">Todos los Usuarios</option>';
+    
+    usuarios.forEach(usuario => {
+      const option = document.createElement('option');
+      option.value = usuario;
+      option.textContent = usuario;
+      select.appendChild(option);
+    });
+  }
+  
+  /**
+   * Cargar historial global de todas las configuraciones
+   */
+  function cargarHistorialGlobal(categoria = '', usuario = '') {
+    // En producción, esto sería:
+    // SELECT * FROM MATRIZ_ASIGNACION_AUDITORIA 
+    // WHERE (CATEGORIA = ? OR ? = '') 
+    // AND (USUARIO_REGISTRO = ? OR ? = '')
+    // ORDER BY ID DESC
+    
+    // Datos de ejemplo simulados con múltiples categorías
+    const historialCompleto = [
+      {
+        ID: 15,
+        ID_REFERENCIA: 14,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: 'COPE 1',
+        CATEGORIA: 'Migraciones',
+        SUBCATEGORIA: 'TS',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES_SF',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'alopez',
+        FECHA_REGISTRO: '2024-01-20 16:45:00'
+      },
+      {
+        ID: 14,
+        ID_REFERENCIA: 13,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: 'COPE 1',
+        CATEGORIA: 'Migraciones',
+        SUBCATEGORIA: 'TS',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'alopez',
+        FECHA_REGISTRO: '2024-01-20 11:30:00'
+      },
+      {
+        ID: 13,
+        ID_REFERENCIA: 12,
+        DIVISION: 'Sur',
+        AREA: 'Atención al Cliente',
+        COPE: 'COPE 5',
+        CATEGORIA: 'CambioDomicilio',
+        SUBCATEGORIA: 'D1',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'N',
+        USUARIO_REGISTRO: 'mrodriguez',
+        FECHA_REGISTRO: '2024-01-18 14:20:00'
+      },
+      {
+        ID: 12,
+        ID_REFERENCIA: 11,
+        DIVISION: 'Sur',
+        AREA: 'Atención al Cliente',
+        COPE: 'COPE 5',
+        CATEGORIA: 'CambioDomicilio',
+        SUBCATEGORIA: 'D1',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'jperez',
+        FECHA_REGISTRO: '2024-01-15 10:00:00'
+      },
+      {
+        ID: 11,
+        ID_REFERENCIA: 10,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: 'COPE 2',
+        CATEGORIA: 'Altas',
+        SUBCATEGORIA: 'A0',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES_SF',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'mgomez',
+        FECHA_REGISTRO: '2024-01-12 09:15:00'
+      },
+      {
+        ID: 10,
+        ID_REFERENCIA: 0,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: 'COPE 2',
+        CATEGORIA: 'Altas',
+        SUBCATEGORIA: 'A0',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'admin',
+        FECHA_REGISTRO: '2024-01-01 08:00:00'
+      }
+    ];
+    
+    // Aplicar filtros
+    let historialFiltrado = historialCompleto;
+    
+    if (categoria) {
+      historialFiltrado = historialFiltrado.filter(r => r.CATEGORIA === categoria);
+    }
+    
+    if (usuario) {
+      historialFiltrado = historialFiltrado.filter(r => r.USUARIO_REGISTRO === usuario);
+    }
+    
+    renderizarHistorialGlobal(historialFiltrado);
+  }
+  
+  /**
+   * Renderizar timeline del historial global
+   */
+  function renderizarHistorialGlobal(registros) {
+    const contenedor = document.getElementById('historialGlobalContenido');
+    
+    if (!registros || registros.length === 0) {
+      contenedor.innerHTML = '<div class="historial-empty">No se encontraron registros de auditoría con los filtros aplicados</div>';
+      return;
+    }
+    
+    contenedor.innerHTML = '';
+    
+    // Agrupar por ID_REFERENCIA para determinar cambios
+    const mapaRegistros = {};
+    registros.forEach(r => {
+      mapaRegistros[r.ID] = r;
+    });
+    
+    // Crear timeline item por cada registro
+    registros.forEach((registro, index) => {
+      const timelineItem = document.createElement('div');
+      timelineItem.className = 'timeline-item';
+      
+      // Marker
+      const marker = document.createElement('div');
+      marker.className = 'timeline-marker';
+      timelineItem.appendChild(marker);
+      
+      // Content
+      const content = document.createElement('div');
+      content.className = 'timeline-content';
+      
+      // Header
+      const header = document.createElement('div');
+      header.className = 'timeline-header';
+      
+      const leftSide = document.createElement('div');
+      
+      const idSpan = document.createElement('span');
+      idSpan.className = 'timeline-id';
+      idSpan.textContent = `ID: ${registro.ID}`;
+      if (registro.ID_REFERENCIA > 0) {
+        idSpan.textContent += ` → Ref: ${registro.ID_REFERENCIA}`;
+      }
+      
+      const categoriaSpan = document.createElement('span');
+      categoriaSpan.className = `timeline-categoria ${registro.CATEGORIA.toLowerCase()}`;
+      categoriaSpan.textContent = registro.CATEGORIA === 'CambioDomicilio' ? 'Cambio Domicilio' : registro.CATEGORIA;
+      
+      leftSide.appendChild(idSpan);
+      leftSide.appendChild(categoriaSpan);
+      
+      const fechaSpan = document.createElement('span');
+      fechaSpan.className = 'timeline-fecha';
+      fechaSpan.textContent = new Date(registro.FECHA_REGISTRO).toLocaleString('es-ES');
+      
+      header.appendChild(leftSide);
+      header.appendChild(fechaSpan);
+      
+      const usuarioDiv = document.createElement('div');
+      usuarioDiv.className = 'timeline-usuario';
+      usuarioDiv.textContent = `👤 Usuario: ${registro.USUARIO_REGISTRO}`;
+      
+      const copeDiv = document.createElement('div');
+      copeDiv.style.fontSize = '13px';
+      copeDiv.style.fontWeight = '600';
+      copeDiv.style.color = '#0562b1';
+      copeDiv.style.marginTop = '5px';
+      copeDiv.textContent = `📍 ${registro.COPE} - ${registro.SUBCATEGORIA}`;
+      
+      content.appendChild(header);
+      content.appendChild(usuarioDiv);
+      content.appendChild(copeDiv);
+      
+      // Detalles del cambio
+      const detallesDiv = document.createElement('div');
+      detallesDiv.className = 'timeline-detalles';
+      
+      // Comparar con registro anterior si existe
+      if (registro.ID_REFERENCIA > 0 && mapaRegistros[registro.ID_REFERENCIA]) {
+        const registroAnterior = mapaRegistros[registro.ID_REFERENCIA];
+        const cambios = compararRegistrosGlobales(registroAnterior, registro);
+        
+        if (cambios.length > 0) {
+          const cambiosTitle = document.createElement('div');
+          cambiosTitle.style.fontWeight = '600';
+          cambiosTitle.style.marginBottom = '8px';
+          cambiosTitle.textContent = '📝 Cambios realizados:';
+          detallesDiv.appendChild(cambiosTitle);
+          
+          cambios.forEach(cambio => {
+            const cambioItem = document.createElement('div');
+            cambioItem.className = 'cambio-item modificado';
+            
+            const label = document.createElement('span');
+            label.className = 'cambio-label';
+            label.textContent = cambio.campo + ':';
+            
+            const anterior = document.createElement('span');
+            anterior.className = 'cambio-anterior';
+            anterior.textContent = cambio.valorAnterior;
+            
+            const nuevo = document.createElement('span');
+            nuevo.className = 'cambio-nuevo';
+            nuevo.textContent = '→ ' + cambio.valorNuevo;
+            
+            cambioItem.appendChild(label);
+            cambioItem.appendChild(anterior);
+            cambioItem.appendChild(nuevo);
+            
+            detallesDiv.appendChild(cambioItem);
+          });
+        }
+      } else {
+        const creacionDiv = document.createElement('div');
+        creacionDiv.className = 'cambio-item';
+        creacionDiv.innerHTML = '<span class="cambio-label">📝 Registro inicial creado</span>';
+        detallesDiv.appendChild(creacionDiv);
+      }
+      
+      // Estado actual
+      const estadoDiv = document.createElement('div');
+      estadoDiv.style.marginTop = '10px';
+      estadoDiv.style.fontSize = '12px';
+      estadoDiv.style.padding = '8px';
+      estadoDiv.style.background = '#ffffff';
+      estadoDiv.style.borderRadius = '4px';
+      estadoDiv.innerHTML = `
+        <strong>Estado de la configuración:</strong><br>
+        División: ${registro.DIVISION || 'N/A'} | Área: ${registro.AREA || 'N/A'}<br>
+        Tipo Orden: ${registro.TIPO_ORDEN} | Tipo Recurso: ${registro.TIPO_RECURSO}<br>
+        Habilitado: ${registro.HABILITADO === 'S' ? '✅ Sí' : '❌ No'}
+      `;
+      
+      detallesDiv.appendChild(estadoDiv);
+      content.appendChild(detallesDiv);
+      
+      timelineItem.appendChild(content);
+      contenedor.appendChild(timelineItem);
+    });
+  }
+  
+  /**
+   * Comparar dos registros y retornar cambios
+   */
+  function compararRegistrosGlobales(anterior, nuevo) {
+    const cambios = [];
+    const campos = ['DIVISION', 'AREA', 'COPE', 'CATEGORIA', 'SUBCATEGORIA', 'TIPO_ORDEN', 'TIPO_RECURSO', 'HABILITADO'];
+    
+    campos.forEach(campo => {
+      if (anterior[campo] !== nuevo[campo]) {
+        cambios.push({
+          campo: campo.replace('_', ' '),
+          valorAnterior: anterior[campo] || 'N/A',
+          valorNuevo: nuevo[campo] || 'N/A'
+        });
+      }
+    });
+    
+    return cambios;
+  }
+  
+  /**
+   * Aplicar filtros al historial
+   */
+  function aplicarFiltrosHistorial() {
+    const categoria = document.getElementById('filtroCategoriaHistorial').value;
+    const usuario = document.getElementById('filtroUsuarioHistorial').value;
+    
+    document.getElementById('historialGlobalContenido').innerHTML = '<div class="historial-loading">🔄 Aplicando filtros...</div>';
+    
+    setTimeout(() => {
+      cargarHistorialGlobal(categoria, usuario);
+    }, 300);
+  }
+  
+  /**
+   * Cerrar modal de historial global
+   */
+  function cerrarModalHistorialGlobal() {
+    document.getElementById('modalHistorialGlobal').classList.remove('visible');
+  }
+  
+  // Event listeners para modal de historial global
+  document.getElementById('modalHistorialGlobalClose').addEventListener('click', cerrarModalHistorialGlobal);
+  document.getElementById('btnCerrarModalHistorialGlobal').addEventListener('click', cerrarModalHistorialGlobal);
+  
+  document.getElementById('modalHistorialGlobal').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModalHistorialGlobal();
+    }
+  });
+  
+  console.log('🕐 Funcionalidad de historial global cargada');
+
+  // Inicializar al cargar
+  inicializar();
+</script>
+</body>
+</html>
