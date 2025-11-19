@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Visor de Auditoría - Matriz de Asignación Electrónica</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-header-bg: #0a6cbd;
+  --color-header-text: #ffffff;
+  --color-border: #d1d9e0;
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-danger: #f44336;
+  --color-info: #2196f3;
+  --radius: 6px;
+  --font-stack: "Segoe UI", Arial, sans-serif;
+}
+
+body {
+  font-family: var(--font-stack);
+  margin: 0;
+  background: #f5f7fa;
+  color: #222;
+}
+
+header {
+  background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%);
+  color: var(--color-header-text);
+  padding: 24px 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.filters-bar {
+  background: #ffffff;
+  padding: 20px 32px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font-stack);
+  transition: all 0.2s;
+}
+
+.filter-group select:focus,
+.filter-group input:focus {
+  outline: none;
+  border-color: #6a1b9a;
+  box-shadow: 0 0 0 3px rgba(106, 27, 154, 0.1);
+}
+
+.btn-filter {
+  background: #6a1b9a;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 42px;
+}
+
+.btn-filter:hover {
+  background: #4a148c;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(106, 27, 154, 0.3);
+}
+
+.btn-clear {
+  background: #757575;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 42px;
+}
+
+.btn-clear:hover {
+  background: #616161;
+}
+
+.info-banner {
+  background: #e1f5fe;
+  border-left: 4px solid var(--color-info);
+  padding: 12px 20px;
+  margin: 20px 32px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.info-banner-icon {
+  font-size: 20px;
+}
+
+.info-banner-text {
+  font-size: 13px;
+  color: #01579b;
+}
+
+.warning-banner {
+  background: #fff3e0;
+  border-left: 4px solid #ff9800;
+  padding: 12px 20px;
+  margin: 20px 32px;
+  border-radius: var(--radius);
+  display: none;
+  align-items: center;
+  gap: 12px;
+}
+
+.warning-banner.visible {
+  display: flex;
+}
+
+.warning-banner-icon {
+  font-size: 20px;
+}
+
+.warning-banner-text {
+  font-size: 13px;
+  color: #e65100;
+  font-weight: 500;
+}
+
+.stats-bar {
+  display: flex;
+  gap: 16px;
+  padding: 16px 32px;
+  background: #ffffff;
+  margin: 0 32px 20px 32px;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #f5f7fa;
+  border-radius: 4px;
+}
+
+.stat-icon {
+  font-size: 18px;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: #6a1b9a;
+}
+
+main {
+  padding: 0 32px 32px 32px;
+}
+
+.table-container {
+  background: #ffffff;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+thead th {
+  background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%);
+  color: white;
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid #4a148c;
+  white-space: nowrap;
+}
+
+thead th.col-id {
+  width: 60px;
+  text-align: center;
+}
+
+thead th.col-id-ref {
+  width: 80px;
+  text-align: center;
+}
+
+thead th.col-cope {
+  width: 120px;
+}
+
+thead th.col-fecha {
+  width: 160px;
+}
+
+tbody tr {
+  transition: background 0.2s;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+tbody tr:hover {
+  background: #f5f5f5;
+}
+
+tbody td {
+  padding: 12px;
+  vertical-align: middle;
+}
+
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: 4px 8px;
+  background: #6a1b9a;
+  color: white;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.id-ref-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: 4px 8px;
+  background: #757575;
+  color: white;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+
+.id-ref-badge.first-record {
+  background: #4caf50;
+}
+
+.cope-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: #e1bee7;
+  color: #4a148c;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.categoria-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.categoria-badge.altas {
+  background: #e3f2fd;
+  color: #0d47a1;
+}
+
+.categoria-badge.cambiodomicilio {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.categoria-badge.migraciones {
+  background: #e8f5e9;
+  color: #1b5e20;
+}
+
+.tipo-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.tipo-badge.ordenes {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #2196f3;
+}
+
+.tipo-badge.ordenes_sf {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #4caf50;
+}
+
+.recurso-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.recurso-badge.propios {
+  background: #e1f5fe;
+  color: #01579b;
+}
+
+.recurso-badge.terceros {
+  background: #f3e5f5;
+  color: #4a148c;
+}
+
+.habilitado-icon {
+  font-size: 16px;
+}
+
+.habilitado-icon.si {
+  color: #4caf50;
+}
+
+.habilitado-icon.no {
+  color: #f44336;
+}
+
+.fecha-text {
+  font-size: 12px;
+  color: #555;
+}
+
+.usuario-text {
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+}
+
+.btn-detail {
+  background: #6a1b9a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-detail:hover {
+  background: #4a148c;
+  transform: scale(1.05);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.empty-state-text {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* Modal Styles */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-overlay.visible {
+  display: flex;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 800px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%);
+  color: white;
+  padding: 20px 24px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  padding: 0;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #222;
+  font-weight: 500;
+}
+
+.comparison-section {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.comparison-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #6a1b9a;
+  margin-bottom: 16px;
+}
+
+.comparison-item {
+  background: #f9fafb;
+  border-left: 3px solid #ff9800;
+  padding: 12px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.comparison-field {
+  font-weight: 600;
+  color: #333;
+}
+
+.comparison-old {
+  color: #f44336;
+  text-decoration: line-through;
+  margin-right: 8px;
+}
+
+.comparison-new {
+  color: #4caf50;
+  font-weight: 600;
+}
+
+.no-changes {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+  font-style: italic;
+}
+
+/* Loading Spinner */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.spinner {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #6a1b9a;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+</style>
+</head>
+<body>
+  <header>
+    <h1>📊 Visor de Auditoría - Matriz de Asignación Electrónica</h1>
+    <p>Sistema de consulta de historial de cambios (MATRIZ_ASIGNACION_AUDITORIA)</p>
+  </header>
+
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label for="filtroDivision">División</label>
+      <select id="filtroDivision">
+        <option value="">Todas</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroArea">Área</label>
+      <select id="filtroArea">
+        <option value="">Todas</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroCope">COPE</label>
+      <select id="filtroCope">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroCategoria">Categoría</label>
+      <select id="filtroCategoria">
+        <option value="">Todas</option>
+        <option value="Altas">Altas</option>
+        <option value="CambioDomicilio">Cambio de Domicilio</option>
+        <option value="Migraciones">Migraciones</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroUsuario">Usuario</label>
+      <select id="filtroUsuario">
+        <option value="">Todos</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroFechaDesde">Fecha Desde</label>
+      <input type="date" id="filtroFechaDesde">
+    </div>
+
+    <div class="filter-group">
+      <label for="filtroFechaHasta">Fecha Hasta</label>
+      <input type="date" id="filtroFechaHasta">
+    </div>
+
+    <div style="display: flex; gap: 8px; align-items: flex-end;">
+      <button class="btn-filter" onclick="aplicarFiltros()">🔍 Filtrar</button>
+      <button class="btn-clear" onclick="limpiarFiltros()">✖ Limpiar</button>
+    </div>
+  </div>
+
+  <div class="info-banner">
+    <div class="info-banner-icon">ℹ️</div>
+    <div class="info-banner-text">
+      <strong>Sistema de Snapshots:</strong> Cada registro representa un estado completo de la configuración. 
+      El campo <strong>ID_REFERENCIA</strong> apunta al snapshot anterior, permitiendo reconstruir el historial completo de cambios.
+    </div>
+  </div>
+
+  <div class="warning-banner" id="warningBanner">
+    <div class="warning-banner-icon">⚠️</div>
+    <div class="warning-banner-text" id="warningBannerText">
+      No se encontraron registros para los filtros especificados. Mostrando todos los registros disponibles.
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stat-item">
+      <span class="stat-icon">📋</span>
+      <div>
+        <div class="stat-label">Total Registros</div>
+        <div class="stat-value" id="statTotal">0</div>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">🔗</span>
+      <div>
+        <div class="stat-label">Configuraciones Únicas</div>
+        <div class="stat-value" id="statUnicos">0</div>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">👤</span>
+      <div>
+        <div class="stat-label">Usuarios Activos</div>
+        <div class="stat-value" id="statUsuarios">0</div>
+      </div>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon">📅</span>
+      <div>
+        <div class="stat-label">Último Cambio</div>
+        <div class="stat-value" id="statUltimo">-</div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div class="table-container">
+      <div class="table-wrapper">
+        <table id="tablaAuditoria">
+          <thead>
+            <tr>
+              <th>División</th>
+              <th>Área</th>
+              <th class="col-cope">COPE</th>
+              <th>Categoría</th>
+              <th>Subcategoría</th>
+              <th>Tipo Orden</th>
+              <th>Tipo Recurso</th>
+              <th>Habilitado</th>
+              <th>Usuario</th>
+              <th class="col-fecha">Fecha Registro</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody id="tablaAuditoriaBody">
+            <tr>
+              <td colspan="11" style="text-align: center; padding: 40px;">
+                <div class="loading">
+                  <div class="spinner"></div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal: Detalle de Registro -->
+  <div class="modal-overlay" id="modalDetalle">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="tituloModalDetalle">📋 Detalle de Registro de Auditoría</h3>
+        <button class="modal-close" onclick="cerrarModalDetalle()">&times;</button>
+      </div>
+      <div class="modal-body" id="contenidoModalDetalle">
+        <!-- Se llena dinámicamente -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-filter" onclick="cerrarModalDetalle()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+  console.log('🎬 Visor de Auditoría - Cargando...');
+
+  // ============ DATOS SIMULADOS ============
+  // En producción, estos datos vendrían de una llamada AJAX a la base de datos
+  const datosAuditoria = [
+    {
+      ID: 25,
+      ID_REFERENCIA: 24,
+      DIVISION: 'División Norte',
+      AREA: 'Red',
+      COPE: 'COPE 1',
+      CATEGORIA: 'Altas',
+      SUBCATEGORIA: 'A0',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Terceros',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'jperez',
+      FECHA_REGISTRO: '2024-11-18 14:30:00'
+    },
+    {
+      ID: 24,
+      ID_REFERENCIA: 23,
+      DIVISION: 'División Norte',
+      AREA: 'Red',
+      COPE: 'COPE 1',
+      CATEGORIA: 'Altas',
+      SUBCATEGORIA: 'A0',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'mgomez',
+      FECHA_REGISTRO: '2024-11-15 10:15:00'
+    },
+    {
+      ID: 23,
+      ID_REFERENCIA: 0,
+      DIVISION: 'División Norte',
+      AREA: 'Red',
+      COPE: 'COPE 1',
+      CATEGORIA: 'Altas',
+      SUBCATEGORIA: 'A0',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'admin',
+      FECHA_REGISTRO: '2024-11-01 08:00:00'
+    },
+    {
+      ID: 22,
+      ID_REFERENCIA: 21,
+      DIVISION: 'División Sur',
+      AREA: 'Comercial',
+      COPE: 'COPE 2',
+      CATEGORIA: 'CambioDomicilio',
+      SUBCATEGORIA: 'D1',
+      TIPO_ORDEN: 'ORDENES_SF',
+      TIPO_RECURSO: 'Terceros',
+      HABILITADO: 'N',
+      USUARIO_REGISTRO: 'alopez',
+      FECHA_REGISTRO: '2024-11-17 16:45:00'
+    },
+    {
+      ID: 21,
+      ID_REFERENCIA: 0,
+      DIVISION: 'División Sur',
+      AREA: 'Comercial',
+      COPE: 'COPE 2',
+      CATEGORIA: 'CambioDomicilio',
+      SUBCATEGORIA: 'D1',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'admin',
+      FECHA_REGISTRO: '2024-11-10 09:00:00'
+    },
+    {
+      ID: 20,
+      ID_REFERENCIA: 19,
+      DIVISION: 'División Centro',
+      AREA: 'Soporte Técnico',
+      COPE: 'COPE 3',
+      CATEGORIA: 'Migraciones',
+      SUBCATEGORIA: 'TS',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'mrodriguez',
+      FECHA_REGISTRO: '2024-11-16 11:20:00'
+    },
+    {
+      ID: 19,
+      ID_REFERENCIA: 0,
+      DIVISION: 'División Centro',
+      AREA: 'Soporte Técnico',
+      COPE: 'COPE 3',
+      CATEGORIA: 'Migraciones',
+      SUBCATEGORIA: 'TS',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'N',
+      USUARIO_REGISTRO: 'admin',
+      FECHA_REGISTRO: '2024-11-05 14:00:00'
+    },
+    {
+      ID: 18,
+      ID_REFERENCIA: 17,
+      DIVISION: 'División Norte',
+      AREA: 'Red',
+      COPE: 'COPE 4',
+      CATEGORIA: 'Altas',
+      SUBCATEGORIA: 'AT',
+      TIPO_ORDEN: 'ORDENES_SF',
+      TIPO_RECURSO: 'Terceros',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'jperez',
+      FECHA_REGISTRO: '2024-11-14 13:30:00'
+    },
+    {
+      ID: 17,
+      ID_REFERENCIA: 0,
+      DIVISION: 'División Norte',
+      AREA: 'Red',
+      COPE: 'COPE 4',
+      CATEGORIA: 'Altas',
+      SUBCATEGORIA: 'AT',
+      TIPO_ORDEN: 'ORDENES',
+      TIPO_RECURSO: 'Propios',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'mgomez',
+      FECHA_REGISTRO: '2024-11-08 10:00:00'
+    },
+    {
+      ID: 16,
+      ID_REFERENCIA: 0,
+      DIVISION: 'División Sur',
+      AREA: 'Atención al Cliente',
+      COPE: 'COPE 5',
+      CATEGORIA: 'CambioDomicilio',
+      SUBCATEGORIA: 'D2',
+      TIPO_ORDEN: 'ORDENES_SF',
+      TIPO_RECURSO: 'Terceros',
+      HABILITADO: 'S',
+      USUARIO_REGISTRO: 'alopez',
+      FECHA_REGISTRO: '2024-11-12 15:45:00'
+    }
+  ];
+
+  let datosFiltrados = [...datosAuditoria];
+
+  // ============ INICIALIZACIÓN ============
+  function inicializar() {
+    cargarFiltros();
+    
+    // Leer parámetros de URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const divisionParam = urlParams.get('division');
+    const areaParam = urlParams.get('area');
+    const copeParam = urlParams.get('cope');
+    
+    // Si hay parámetros, aplicar filtros automáticamente
+    if (divisionParam || areaParam || copeParam) {
+      console.log('📌 Parámetros recibidos:', { division: divisionParam, area: areaParam, cope: copeParam });
+      
+      // Establecer valores en los filtros
+      if (divisionParam) document.getElementById('filtroDivision').value = divisionParam;
+      if (areaParam) document.getElementById('filtroArea').value = areaParam;
+      if (copeParam) document.getElementById('filtroCope').value = copeParam;
+      
+      // Aplicar filtros
+      const resultadosFiltrados = aplicarFiltrosIniciales();
+      
+      // Si no hay resultados, mostrar todo con advertencia
+      if (resultadosFiltrados.length === 0) {
+        const mensajeCope = copeParam ? `COPE: "${copeParam}"` : '';
+        const mensajeDivision = divisionParam ? `División: "${divisionParam}"` : '';
+        const mensajeArea = areaParam ? `Área: "${areaParam}"` : '';
+        const filtros = [mensajeDivision, mensajeArea, mensajeCope].filter(m => m).join(', ');
+        
+        document.getElementById('warningBannerText').textContent = 
+          `⚠️ No se encontraron registros para ${filtros}. Mostrando todos los registros disponibles.`;
+        document.getElementById('warningBanner').classList.add('visible');
+        
+        // Limpiar filtros y mostrar todo
+        document.getElementById('filtroDivision').value = '';
+        document.getElementById('filtroArea').value = '';
+        document.getElementById('filtroCope').value = '';
+        renderizarTabla(datosAuditoria);
+        actualizarEstadisticas(datosAuditoria);
+      } else {
+        renderizarTabla(resultadosFiltrados);
+        actualizarEstadisticas(resultadosFiltrados);
+      }
+    } else {
+      // Sin parámetros, mostrar todo
+      renderizarTabla(datosAuditoria);
+      actualizarEstadisticas(datosAuditoria);
+    }
+  }
+
+  // ============ CARGAR FILTROS DINÁMICOS ============
+  function cargarFiltros() {
+    // Extraer valores únicos de divisiones
+    const divisiones = [...new Set(datosAuditoria.map(d => d.DIVISION).filter(Boolean))].sort();
+    const selectDivision = document.getElementById('filtroDivision');
+    divisiones.forEach(div => {
+      const option = document.createElement('option');
+      option.value = div;
+      option.textContent = div;
+      selectDivision.appendChild(option);
+    });
+
+    // Extraer valores únicos de áreas
+    const areas = [...new Set(datosAuditoria.map(d => d.AREA).filter(Boolean))].sort();
+    const selectArea = document.getElementById('filtroArea');
+    areas.forEach(area => {
+      const option = document.createElement('option');
+      option.value = area;
+      option.textContent = area;
+      selectArea.appendChild(option);
+    });
+
+    // Extraer valores únicos de COPEs
+    const copes = [...new Set(datosAuditoria.map(d => d.COPE))].sort();
+    const selectCope = document.getElementById('filtroCope');
+    copes.forEach(cope => {
+      const option = document.createElement('option');
+      option.value = cope;
+      option.textContent = cope;
+      selectCope.appendChild(option);
+    });
+
+    // Extraer valores únicos de usuarios
+    const usuarios = [...new Set(datosAuditoria.map(d => d.USUARIO_REGISTRO))].sort();
+    const selectUsuario = document.getElementById('filtroUsuario');
+    usuarios.forEach(usuario => {
+      const option = document.createElement('option');
+      option.value = usuario;
+      option.textContent = usuario;
+      selectUsuario.appendChild(option);
+    });
+  }
+
+  // ============ RENDERIZAR TABLA ============
+  function renderizarTabla(datos) {
+    const tbody = document.getElementById('tablaAuditoriaBody');
+    
+    if (datos.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="11">
+            <div class="empty-state">
+              <div class="empty-state-icon">🔍</div>
+              <div class="empty-state-text">No se encontraron registros de auditoría con los filtros aplicados</div>
+            </div>
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = '';
+
+    datos.forEach(registro => {
+      const tr = document.createElement('tr');
+
+      // DIVISION
+      const tdDivision = document.createElement('td');
+      tdDivision.textContent = registro.DIVISION || '-';
+
+      // AREA
+      const tdArea = document.createElement('td');
+      tdArea.textContent = registro.AREA || '-';
+
+      // COPE
+      const tdCope = document.createElement('td');
+      tdCope.innerHTML = `<span class="cope-badge">${registro.COPE}</span>`;
+
+      // CATEGORIA
+      const tdCategoria = document.createElement('td');
+      const categClass = registro.CATEGORIA.toLowerCase().replace(/\s/g, '');
+      tdCategoria.innerHTML = `<span class="categoria-badge ${categClass}">${registro.CATEGORIA}</span>`;
+
+      // SUBCATEGORIA
+      const tdSubcategoria = document.createElement('td');
+      tdSubcategoria.innerHTML = `<strong>${registro.SUBCATEGORIA}</strong>`;
+
+      // TIPO_ORDEN
+      const tdTipoOrden = document.createElement('td');
+      const ordenClass = registro.TIPO_ORDEN.toLowerCase().replace('_', '_');
+      tdTipoOrden.innerHTML = `<span class="tipo-badge ${ordenClass}">${registro.TIPO_ORDEN}</span>`;
+
+      // TIPO_RECURSO
+      const tdTipoRecurso = document.createElement('td');
+      const recursoClass = registro.TIPO_RECURSO.toLowerCase();
+      tdTipoRecurso.innerHTML = `<span class="recurso-badge ${recursoClass}">${registro.TIPO_RECURSO}</span>`;
+
+      // HABILITADO
+      const tdHabilitado = document.createElement('td');
+      tdHabilitado.style.textAlign = 'center';
+      const habIcon = registro.HABILITADO === 'S' ? '✅' : '❌';
+      const habClass = registro.HABILITADO === 'S' ? 'si' : 'no';
+      tdHabilitado.innerHTML = `<span class="habilitado-icon ${habClass}">${habIcon}</span>`;
+
+      // USUARIO_REGISTRO
+      const tdUsuario = document.createElement('td');
+      tdUsuario.innerHTML = `<span class="usuario-text">👤 ${registro.USUARIO_REGISTRO}</span>`;
+
+      // FECHA_REGISTRO
+      const tdFecha = document.createElement('td');
+      const fecha = new Date(registro.FECHA_REGISTRO);
+      tdFecha.innerHTML = `<span class="fecha-text">${fecha.toLocaleString('es-ES')}</span>`;
+
+      // ACCIÓN
+      const tdAccion = document.createElement('td');
+      tdAccion.style.textAlign = 'center';
+      const btnDetalle = document.createElement('button');
+      btnDetalle.className = 'btn-detail';
+      btnDetalle.textContent = 'Ver Detalle';
+      btnDetalle.onclick = () => verDetalle(registro);
+      tdAccion.appendChild(btnDetalle);
+
+      tr.appendChild(tdDivision);
+      tr.appendChild(tdArea);
+      tr.appendChild(tdCope);
+      tr.appendChild(tdCategoria);
+      tr.appendChild(tdSubcategoria);
+      tr.appendChild(tdTipoOrden);
+      tr.appendChild(tdTipoRecurso);
+      tr.appendChild(tdHabilitado);
+      tr.appendChild(tdUsuario);
+      tr.appendChild(tdFecha);
+      tr.appendChild(tdAccion);
+
+      tbody.appendChild(tr);
+    });
+  }
+
+  // ============ ACTUALIZAR ESTADÍSTICAS ============
+  function actualizarEstadisticas(datos) {
+    // Total registros
+    document.getElementById('statTotal').textContent = datos.length;
+
+    // Configuraciones únicas (por COPE + CATEGORIA + SUBCATEGORIA)
+    const unicos = new Set(datos.map(d => `${d.COPE}-${d.CATEGORIA}-${d.SUBCATEGORIA}`));
+    document.getElementById('statUnicos').textContent = unicos.size;
+
+    // Usuarios únicos
+    const usuarios = new Set(datos.map(d => d.USUARIO_REGISTRO));
+    document.getElementById('statUsuarios').textContent = usuarios.size;
+
+    // Último cambio
+    if (datos.length > 0) {
+      const ultimaFecha = new Date(Math.max(...datos.map(d => new Date(d.FECHA_REGISTRO))));
+      const ahora = new Date();
+      const diffMs = ahora - ultimaFecha;
+      const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+      const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      
+      let textoTiempo = '';
+      if (diffDays > 0) {
+        textoTiempo = `${diffDays}d`;
+      } else if (diffHrs > 0) {
+        textoTiempo = `${diffHrs}h`;
+      } else {
+        textoTiempo = 'Hoy';
+      }
+      
+      document.getElementById('statUltimo').textContent = textoTiempo;
+    } else {
+      document.getElementById('statUltimo').textContent = '-';
+    }
+  }
+
+  // ============ APLICAR FILTROS INICIALES (desde URL) ============
+  function aplicarFiltrosIniciales() {
+    const division = document.getElementById('filtroDivision').value;
+    const area = document.getElementById('filtroArea').value;
+    const cope = document.getElementById('filtroCope').value;
+
+    const resultados = datosAuditoria.filter(registro => {
+      let cumple = true;
+
+      if (division && registro.DIVISION !== division) cumple = false;
+      if (area && registro.AREA !== area) cumple = false;
+      if (cope && registro.COPE !== cope) cumple = false;
+
+      return cumple;
+    });
+
+    return resultados;
+  }
+
+  // ============ APLICAR FILTROS ============
+  function aplicarFiltros() {
+    // Ocultar banner de advertencia cuando el usuario filtra manualmente
+    document.getElementById('warningBanner').classList.remove('visible');
+    const division = document.getElementById('filtroDivision').value;
+    const area = document.getElementById('filtroArea').value;
+    const cope = document.getElementById('filtroCope').value;
+    const categoria = document.getElementById('filtroCategoria').value;
+    const usuario = document.getElementById('filtroUsuario').value;
+    const fechaDesde = document.getElementById('filtroFechaDesde').value;
+    const fechaHasta = document.getElementById('filtroFechaHasta').value;
+
+    datosFiltrados = datosAuditoria.filter(registro => {
+      let cumple = true;
+
+      if (division && registro.DIVISION !== division) cumple = false;
+      if (area && registro.AREA !== area) cumple = false;
+      if (cope && registro.COPE !== cope) cumple = false;
+      if (categoria && registro.CATEGORIA !== categoria) cumple = false;
+      if (usuario && registro.USUARIO_REGISTRO !== usuario) cumple = false;
+
+      if (fechaDesde) {
+        const fechaRegistro = new Date(registro.FECHA_REGISTRO);
+        const fechaMin = new Date(fechaDesde);
+        if (fechaRegistro < fechaMin) cumple = false;
+      }
+
+      if (fechaHasta) {
+        const fechaRegistro = new Date(registro.FECHA_REGISTRO);
+        const fechaMax = new Date(fechaHasta);
+        fechaMax.setHours(23, 59, 59, 999);
+        if (fechaRegistro > fechaMax) cumple = false;
+      }
+
+      return cumple;
+    });
+
+    renderizarTabla(datosFiltrados);
+    actualizarEstadisticas(datosFiltrados);
+  }
+
+  // ============ LIMPIAR FILTROS ============
+  function limpiarFiltros() {
+    // Ocultar banner de advertencia
+    document.getElementById('warningBanner').classList.remove('visible');
+    
+    document.getElementById('filtroDivision').value = '';
+    document.getElementById('filtroArea').value = '';
+    document.getElementById('filtroCope').value = '';
+    document.getElementById('filtroCategoria').value = '';
+    document.getElementById('filtroUsuario').value = '';
+    document.getElementById('filtroFechaDesde').value = '';
+    document.getElementById('filtroFechaHasta').value = '';
+
+    datosFiltrados = [...datosAuditoria];
+    renderizarTabla(datosFiltrados);
+    actualizarEstadisticas(datosFiltrados);
+  }
+
+  // ============ VER DETALLE DE REGISTRO ============
+  function verDetalle(registro) {
+    document.getElementById('tituloModalDetalle').textContent = `📋 Detalle de Auditoría - ID: ${registro.ID}`;
+
+    const contenido = document.getElementById('contenidoModalDetalle');
+    
+    let html = `
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-label">ID de Auditoría</div>
+          <div class="detail-value"><span class="id-badge">${registro.ID}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">ID Referencia</div>
+          <div class="detail-value">
+            <span class="id-ref-badge ${registro.ID_REFERENCIA === 0 ? 'first-record' : ''}">
+              ${registro.ID_REFERENCIA === 0 ? '🆕 Primer Registro' : registro.ID_REFERENCIA}
+            </span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">División</div>
+          <div class="detail-value">${registro.DIVISION || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Área</div>
+          <div class="detail-value">${registro.AREA || '-'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">COPE</div>
+          <div class="detail-value"><span class="cope-badge">${registro.COPE}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Categoría</div>
+          <div class="detail-value"><span class="categoria-badge ${registro.CATEGORIA.toLowerCase().replace(/\s/g, '')}">${registro.CATEGORIA}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Subcategoría</div>
+          <div class="detail-value"><strong>${registro.SUBCATEGORIA}</strong></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Tipo de Orden</div>
+          <div class="detail-value"><span class="tipo-badge ${registro.TIPO_ORDEN.toLowerCase().replace('_', '_')}">${registro.TIPO_ORDEN}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Tipo de Recurso</div>
+          <div class="detail-value"><span class="recurso-badge ${registro.TIPO_RECURSO.toLowerCase()}">${registro.TIPO_RECURSO}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Habilitado</div>
+          <div class="detail-value">${registro.HABILITADO === 'S' ? '✅ Sí' : '❌ No'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Usuario que Registró</div>
+          <div class="detail-value">👤 ${registro.USUARIO_REGISTRO}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Fecha de Registro</div>
+          <div class="detail-value">${new Date(registro.FECHA_REGISTRO).toLocaleString('es-ES')}</div>
+        </div>
+      </div>
+    `;
+
+    // Si tiene referencia a un registro anterior, mostrar comparación
+    if (registro.ID_REFERENCIA > 0) {
+      const anterior = datosAuditoria.find(r => r.ID === registro.ID_REFERENCIA);
+      
+      if (anterior) {
+        html += '<div class="comparison-section">';
+        html += '<div class="comparison-title">🔄 Cambios Realizados</div>';
+
+        const cambios = [];
+        
+        if (anterior.TIPO_ORDEN !== registro.TIPO_ORDEN) {
+          cambios.push({
+            campo: 'Tipo de Orden',
+            anterior: anterior.TIPO_ORDEN,
+            nuevo: registro.TIPO_ORDEN
+          });
+        }
+        
+        if (anterior.TIPO_RECURSO !== registro.TIPO_RECURSO) {
+          cambios.push({
+            campo: 'Tipo de Recurso',
+            anterior: anterior.TIPO_RECURSO,
+            nuevo: registro.TIPO_RECURSO
+          });
+        }
+        
+        if (anterior.HABILITADO !== registro.HABILITADO) {
+          cambios.push({
+            campo: 'Habilitado',
+            anterior: anterior.HABILITADO === 'S' ? 'Sí' : 'No',
+            nuevo: registro.HABILITADO === 'S' ? 'Sí' : 'No'
+          });
+        }
+        
+        if (anterior.DIVISION !== registro.DIVISION) {
+          cambios.push({
+            campo: 'División',
+            anterior: anterior.DIVISION || '-',
+            nuevo: registro.DIVISION || '-'
+          });
+        }
+        
+        if (anterior.AREA !== registro.AREA) {
+          cambios.push({
+            campo: 'Área',
+            anterior: anterior.AREA || '-',
+            nuevo: registro.AREA || '-'
+          });
+        }
+
+        if (cambios.length > 0) {
+          cambios.forEach(cambio => {
+            html += `
+              <div class="comparison-item">
+                <span class="comparison-field">${cambio.campo}:</span>
+                <span class="comparison-old">${cambio.anterior}</span>
+                <span>→</span>
+                <span class="comparison-new">${cambio.nuevo}</span>
+              </div>
+            `;
+          });
+        } else {
+          html += '<div class="no-changes">No se detectaron cambios en los valores principales</div>';
+        }
+
+        html += '</div>';
+      }
+    } else {
+      html += `
+        <div class="comparison-section">
+          <div class="comparison-title">📝 Información</div>
+          <div class="comparison-item" style="border-left-color: #4caf50;">
+            Este es el <strong>primer registro (snapshot inicial)</strong> para esta configuración.
+          </div>
+        </div>
+      `;
+    }
+
+    contenido.innerHTML = html;
+    document.getElementById('modalDetalle').classList.add('visible');
+  }
+
+  // ============ CERRAR MODAL ============
+  function cerrarModalDetalle() {
+    document.getElementById('modalDetalle').classList.remove('visible');
+  }
+
+  // Cerrar modal al hacer clic fuera
+  document.getElementById('modalDetalle').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModalDetalle();
+    }
+  });
+
+  // ============ INICIAR ============
+  window.addEventListener('DOMContentLoaded', () => {
+    inicializar();
+    console.log('✅ Visor de Auditoría cargado correctamente');
+  });
+</script>
+</body>
+</html>
