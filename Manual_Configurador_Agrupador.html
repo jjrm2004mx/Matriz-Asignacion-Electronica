@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Manual de Usuario - Configurador de Agrupador de Tareas</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-accent: #ff6b35;
+  --color-success: #4caf50;
+  --color-info: #2196f3;
+  --color-border: #d1d9e0;
+  --color-bg-light: #f5f9fc;
+}
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: #ffffff;
+  color: #222;
+  line-height: 1.6;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+header {
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: #ffffff;
+  padding: 30px 40px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+header h1 {
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: 600;
+}
+header p {
+  margin: 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+.section {
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 25px 30px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.section h2 {
+  color: var(--color-primary);
+  margin: 0 0 15px 0;
+  font-size: 20px;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 8px;
+}
+.section h3 {
+  color: var(--color-primary-dark);
+  margin: 20px 0 10px 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+.step {
+  margin: 15px 0;
+  padding: 12px 15px;
+  background: var(--color-bg-light);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 4px;
+}
+.step-number {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #ffffff;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 26px;
+  font-weight: 600;
+  margin-right: 10px;
+  font-size: 14px;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 4px;
+}
+.badge-propios {
+  background: #e3f2fd;
+  color: #0d47a1;
+  border: 1px solid #2196f3;
+}
+.badge-terceros {
+  background: #e8f5e9;
+  color: #1b5e20;
+  border: 1px solid #4caf50;
+}
+.warning {
+  background: #fff3cd;
+  border: 1px solid #ffc107;
+  border-left: 4px solid #ffc107;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+.warning strong {
+  color: #856404;
+}
+.tip {
+  background: #d1ecf1;
+  border: 1px solid #17a2b8;
+  border-left: 4px solid #17a2b8;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin: 15px 0;
+}
+.tip strong {
+  color: #0c5460;
+}
+ul, ol {
+  margin: 10px 0;
+  padding-left: 25px;
+}
+li {
+  margin: 8px 0;
+}
+.icon {
+  font-size: 18px;
+  margin-right: 6px;
+}
+kbd {
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+  padding: 2px 6px;
+  font-family: monospace;
+  font-size: 13px;
+}
+.screenshot-placeholder {
+  background: var(--color-bg-light);
+  border: 2px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #666;
+  margin: 15px 0;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  margin-top: 30px;
+  border-top: 1px solid var(--color-border);
+  color: #666;
+  font-size: 13px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>📖 Manual de Usuario</h1>
+    <p>Configurador de Agrupador de Tareas - Área de Soporte</p>
+  </header>
+
+  <!-- SECCIÓN 1: INTRODUCCIÓN -->
+  <div class="section">
+    <h2>🎯 1. Introducción</h2>
+    <p>El <strong>Configurador de Agrupador de Tareas</strong> es una herramienta especializada diseñada para el área de soporte que permite configurar y gestionar tipos de órdenes y etapas excluidas, organizadas en tres categorías principales:</p>
+    <ul>
+      <li><strong>Altas:</strong> Configuraciones para procesos de alta de servicios</li>
+      <li><strong>Cambio Domicilio:</strong> Configuraciones para cambios de dirección y traslados</li>
+      <li><strong>Migraciones:</strong> Configuraciones para migración de servicios y tecnologías</li>
+    </ul>
+    <p>El sistema clasifica cada tipo de orden en dos categorías de recurso:</p>
+    <div style="margin: 10px 0;">
+      <span class="badge badge-propios">Propios</span> - Órdenes internas (ORDENES)
+    </div>
+    <div style="margin: 10px 0;">
+      <span class="badge badge-terceros">Terceros</span> - Órdenes externas (ORDENES_SF)
+    </div>
+  </div>
+
+  <!-- SECCIÓN 2: INTERFAZ -->
+  <div class="section">
+    <h2>🖥️ 2. Interfaz del Sistema</h2>
+    
+    <h3>Pantalla Principal</h3>
+    <p>La interfaz está organizada en tres secciones principales:</p>
+    <ul>
+      <li><strong>📋 Categorías de Órdenes:</strong> Tres tarjetas interactivas (Altas, Cambio de Domicilio, Migraciones)</li>
+      <li><strong>📊 Resumen General de Configuración:</strong> Tabla que muestra todos los tipos de órdenes configurados</li>
+      <li><strong>Acciones Globales:</strong> Botones para exportar (CSV) y guardar (JSON)</li>
+    </ul>
+
+    <h3>Tarjetas de Categorías</h3>
+    <p>Cada categoría muestra:</p>
+    <ul>
+      <li>Icono y nombre de la categoría</li>
+      <li>Descripción breve</li>
+      <li>Estadística: número de tipos configurados</li>
+    </ul>
+
+    <h3>Tabla de Resumen</h3>
+    <p>Muestra 5 columnas de información:</p>
+    <ul>
+      <li><strong>Categoría:</strong> A qué grupo pertenece (Altas, Cambio Domicilio, Migraciones)</li>
+      <li><strong>Código:</strong> Código identificador del tipo de orden</li>
+      <li><strong>Descripción:</strong> Descripción completa del tipo de orden</li>
+      <li><strong>Tipo:</strong> Badge indicando si es <span class="badge badge-propios">Propios</span> o <span class="badge badge-terceros">Terceros</span></li>
+      <li><strong>Etapas Excluidas:</strong> Lista de etapas excluidas (código: descripción)</li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN 3: GESTIÓN DE TIPOS DE ÓRDENES -->
+  <div class="section">
+    <h2>📝 3. Configuración de Tipos de Órdenes</h2>
+
+    <h3>Abrir Modal de Tipos de Órdenes</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en una tarjeta de categoría</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Seleccione la categoría que desea configurar: <strong>📈 Altas</strong>, <strong>🏠 Cambio de Domicilio</strong>, o <strong>🔄 Migraciones</strong>
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Visualizar tipos existentes</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Se abrirá un modal mostrando todos los tipos de órdenes configurados para esa categoría. Cada tipo muestra:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>Código del tipo de orden (ej: A0, D1, TS)</li>
+        <li>Descripción completa</li>
+        <li>Badge de clasificación: <span class="badge badge-propios">Propios</span> o <span class="badge badge-terceros">Terceros</span></li>
+        <li>Botón <strong>⚙️ Etapas</strong> para configurar etapas excluidas</li>
+        <li>Botón <strong>×</strong> para eliminar el tipo</li>
+      </ul>
+    </div>
+
+    <h3>Agregar Nuevo Tipo de Orden</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en el botón <span style="background: #4caf50; color: white; border-radius: 50%; padding: 2px 6px; font-weight: bold;">+</span></strong>
+      <p style="margin: 8px 0 0 36px;">Ubicado en la parte superior derecha del contenedor de tipos</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Ingresar el código</strong>
+      <p style="margin: 8px 0 0 36px;">
+        En el cuadro de diálogo, ingrese el código del tipo de orden (ej: A0, D1, TS). Se convertirá automáticamente a mayúsculas.
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Ingresar la descripción</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Ingrese una descripción clara del tipo de orden (ej: "Alta Normal", "Cambio con Traslado de Equipo")
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">4</span>
+      <strong>Seleccionar clasificación</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Un cuadro de diálogo preguntará: "¿Es de tipo PROPIOS?"
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li><strong>Aceptar:</strong> Clasifica como <span class="badge badge-propios">Propios</span> (ORDENES)</li>
+        <li><strong>Cancelar:</strong> Clasifica como <span class="badge badge-terceros">Terceros</span> (ORDENES_SF)</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">5</span>
+      <strong>Guardar cambios</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Haga clic en el botón verde <strong>💾 Guardar</strong> para aplicar los cambios
+      </p>
+    </div>
+
+    <h3>Eliminar Tipo de Orden</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en el botón <strong style="color: #f44336;">×</strong></strong>
+      <p style="margin: 8px 0 0 36px;">Ubicado a la derecha de cada tipo de orden</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Confirmar eliminación</strong>
+      <p style="margin: 8px 0 0 36px;">
+        El sistema solicitará confirmación para evitar eliminaciones accidentales
+      </p>
+    </div>
+
+    <div class="warning">
+      <strong>⚠️ Importante:</strong> Al eliminar un tipo de orden, también se eliminarán todas las etapas excluidas configuradas para ese tipo. Esta acción no se puede deshacer.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 4: GESTIÓN DE ETAPAS EXCLUIDAS -->
+  <div class="section">
+    <h2>❌ 4. Configuración de Etapas Excluidas</h2>
+
+    <p>Las etapas excluidas son procesos específicos que deben omitirse para un tipo de orden particular. Cada tipo de orden puede tener múltiples etapas excluidas.</p>
+
+    <h3>Abrir Modal de Etapas Excluidas</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Abrir modal de tipos de órdenes</strong>
+      <p style="margin: 8px 0 0 36px;">Haga clic en la tarjeta de categoría correspondiente</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Seleccionar tipo de orden</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Haga clic en el botón naranja <strong>⚙️ Etapas</strong> del tipo de orden que desea configurar
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Visualizar etapas excluidas actuales</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Se abrirá un nuevo modal mostrando todas las etapas excluidas para ese tipo. Cada etapa muestra:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>Código de la etapa (en color rojo)</li>
+        <li>Descripción de la etapa</li>
+        <li>Botón <strong style="color: #f44336;">×</strong> para eliminar</li>
+      </ul>
+    </div>
+
+    <h3>Agregar Nueva Etapa Excluida</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en el botón <span style="background: #4caf50; color: white; border-radius: 50%; padding: 2px 6px; font-weight: bold;">+</span></strong>
+      <p style="margin: 8px 0 0 36px;">Ubicado en la parte superior derecha del contenedor de etapas</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Ingresar código de etapa</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Ingrese el código de la etapa a excluir (ej: PQ, PM, AG). Se convertirá automáticamente a mayúsculas.
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Ingresar descripción</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Ingrese una descripción clara de la etapa (ej: "Etapa Mantenimiento PQ", "Análisis Técnico AG")
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">4</span>
+      <strong>Guardar cambios</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Haga clic en el botón verde <strong>💾 Guardar</strong> para aplicar los cambios
+      </p>
+    </div>
+
+    <h3>Eliminar Etapa Excluida</h3>
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Hacer clic en el botón <strong style="color: #f44336;">×</strong></strong>
+      <p style="margin: 8px 0 0 36px;">Ubicado a la derecha de cada etapa excluida</p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Confirmar eliminación</strong>
+      <p style="margin: 8px 0 0 36px;">
+        El sistema solicitará confirmación antes de eliminar la etapa
+      </p>
+    </div>
+
+    <div class="tip">
+      <strong>💡 Ejemplo práctico:</strong> Si tiene un tipo de orden "A0 - Alta Normal" y desea excluir las etapas de mantenimiento "PQ" y "PM", simplemente agregue ambas etapas una por una usando el botón <strong>+</strong>.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 5: TABLA DE RESUMEN -->
+  <div class="section">
+    <h2>📊 5. Tabla de Resumen General</h2>
+
+    <p>La tabla de resumen proporciona una vista consolidada de todas las configuraciones realizadas en el sistema. Se actualiza automáticamente cada vez que guarda cambios en tipos de órdenes o etapas excluidas.</p>
+
+    <h3>Características de la Tabla</h3>
+    <ul>
+      <li><strong>Visualización completa:</strong> Muestra todos los tipos de órdenes de todas las categorías en un solo lugar</li>
+      <li><strong>Codificación por colores:</strong> Filas alternadas (blanco/gris claro) para mejor legibilidad</li>
+      <li><strong>Efecto hover:</strong> Al pasar el cursor sobre una fila, cambia a azul claro</li>
+      <li><strong>Scroll horizontal:</strong> Si hay muchas columnas, la tabla permite desplazamiento horizontal</li>
+    </ul>
+
+    <h3>Información Mostrada</h3>
+    <ul>
+      <li><strong>Categoría:</strong> Icono y nombre (📈 Altas, 🏠 Cambio de Domicilio, 🔄 Migraciones)</li>
+      <li><strong>Código:</strong> Identificador único del tipo (en negrita, tamaño 14px)</li>
+      <li><strong>Descripción:</strong> Texto descriptivo completo</li>
+      <li><strong>Tipo:</strong> Badge visual indicando Propios o Terceros</li>
+      <li><strong>Etapas Excluidas:</strong> Lista formateada como "PQ: Descripción • PM: Descripción" o "Sin etapas excluidas" si está vacío</li>
+    </ul>
+
+    <div class="tip">
+      <strong>💡 Uso recomendado:</strong> Utilice esta tabla para verificar rápidamente toda su configuración antes de exportar o guardar. Es especialmente útil para detectar inconsistencias o configuraciones faltantes.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 6: EXPORTAR A CSV -->
+  <div class="section">
+    <h2>📄 6. Exportar Configuración a CSV</h2>
+
+    <p>El sistema permite exportar todas las configuraciones en formato CSV (valores separados por comas), ideal para análisis en Excel, importación a otros sistemas, o respaldo de configuraciones.</p>
+
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Verificar configuraciones</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Revise la tabla de resumen para asegurarse de que todos los datos estén correctos
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Hacer clic en <span style="color: #4caf50;">📄 Exportar Configuración (CSV)</span></strong>
+      <p style="margin: 8px 0 0 36px;">
+        Ubicado en la barra de acciones globales en la parte inferior de la página
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Validación automática</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Si no hay configuraciones en el sistema, aparecerá una alerta indicando que no hay datos para exportar
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">4</span>
+      <strong>Descarga automática</strong>
+      <p style="margin: 8px 0 0 36px;">
+        El archivo CSV se descargará con el nombre: <code>configuracion_agrupador_YYYY-MM-DD.csv</code>
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>Ejemplo: <code>configuracion_agrupador_2025-11-18.csv</code></li>
+      </ul>
+    </div>
+
+    <h3>Estructura del Archivo CSV</h3>
+    <p>El archivo contiene 5 columnas:</p>
+    <ul>
+      <li><strong>Categoría:</strong> Nombre de la categoría (Altas, Cambio Domicilio, Migraciones)</li>
+      <li><strong>Código:</strong> Código del tipo de orden</li>
+      <li><strong>Descripción:</strong> Descripción completa</li>
+      <li><strong>Tipo:</strong> ORDENES (Propios) o ORDENES_SF (Terceros)</li>
+      <li><strong>Etapas Excluidas:</strong> Lista separada por pipes (|), formato: "PQ: Desc|PM: Desc"</li>
+    </ul>
+
+    <div class="tip">
+      <strong>💡 Uso en Excel:</strong> El archivo se abre directamente en Microsoft Excel o Google Sheets. Las etapas excluidas están separadas por el carácter pipe (|) para facilitar el análisis. Puede usar la función "Texto en columnas" de Excel para separar las etapas si lo necesita.
+    </div>
+
+    <div class="tip">
+      <strong>💡 Codificación:</strong> El archivo está codificado en UTF-8 con BOM para compatibilidad con Excel en español. Los caracteres especiales (tildes, ñ) se mostrarán correctamente.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 7: GUARDAR EN JSON -->
+  <div class="section">
+    <h2>💾 7. Guardar Configuración (JSON)</h2>
+
+    <p>El sistema permite guardar la configuración completa en formato JSON, ideal para respaldo, versionamiento, o integración con otros sistemas mediante APIs.</p>
+
+    <div class="step">
+      <span class="step-number">1</span>
+      <strong>Verificar configuraciones</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Asegúrese de que todas las configuraciones estén completas y correctas
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">2</span>
+      <strong>Hacer clic en <span style="color: #0562b1;">💾 Guardar (JSON)</span></strong>
+      <p style="margin: 8px 0 0 36px;">
+        Ubicado en la barra de acciones globales (botón azul) en la parte inferior de la página
+      </p>
+    </div>
+
+    <div class="step">
+      <span class="step-number">3</span>
+      <strong>Revisar el JSON en el modal</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Se abrirá un modal mostrando el JSON formateado con:
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li><strong>fechaExportacion:</strong> Fecha y hora de la exportación (ISO 8601)</li>
+        <li><strong>totalRegistros:</strong> Número total de tipos de órdenes configurados</li>
+        <li><strong>configuraciones:</strong> Array con todos los tipos de órdenes y sus etapas excluidas</li>
+      </ul>
+    </div>
+
+    <div class="step">
+      <span class="step-number">4</span>
+      <strong>Descargar el archivo JSON</strong>
+      <p style="margin: 8px 0 0 36px;">
+        Haga clic en el botón verde <strong>💾 Descargar JSON</strong> dentro del modal
+      </p>
+      <ul style="margin: 8px 0 0 36px;">
+        <li>El archivo se descargará con el nombre: <code>configuracion_agrupador_YYYY-MM-DD.json</code></li>
+        <li>Ejemplo: <code>configuracion_agrupador_2025-11-18.json</code></li>
+      </ul>
+    </div>
+
+    <h3>Estructura del JSON</h3>
+    <p>El archivo JSON tiene la siguiente estructura:</p>
+    <div style="background: #f5f7fa; padding: 16px; border-radius: 4px; overflow: auto; font-family: monospace; font-size: 12px; margin: 15px 0;">
+{
+  "fechaExportacion": "2025-11-18T10:30:00.000Z",
+  "totalRegistros": 8,
+  "configuraciones": [
+    {
+      "categoria": "Altas",
+      "codigo": "A0",
+      "descripcion": "Alta Normal",
+      "tipo": "ORDENES",
+      "etapasExcluidas": [
+        {
+          "codigo": "PQ",
+          "descripcion": "Etapa Mantenimiento PQ"
+        },
+        {
+          "codigo": "PM",
+          "descripcion": "Etapa Mantenimiento PM"
+        }
+      ]
+    }
+  ]
+}
+    </div>
+
+    <div class="tip">
+      <strong>💡 Validación:</strong> El JSON está formateado con indentación de 2 espacios para facilitar la lectura. Puede validar el formato en cualquier validador JSON en línea.
+    </div>
+
+    <div class="tip">
+      <strong>💡 Uso en APIs:</strong> Este formato JSON es ideal para enviar configuraciones a APIs REST. Cada objeto en el array "configuraciones" contiene toda la información necesaria para procesar un tipo de orden.
+    </div>
+  </div>
+
+  <!-- SECCIÓN 8: PREGUNTAS FRECUENTES -->
+  <div class="section">
+    <h2>❓ 8. Preguntas Frecuentes</h2>
+
+    <h3>¿Cuál es la diferencia entre "Propios" y "Terceros"?</h3>
+    <p><strong>Respuesta:</strong></p>
+    <ul>
+      <li><span class="badge badge-propios">Propios</span> (ORDENES): Se refiere a órdenes gestionadas con recursos internos de la empresa</li>
+      <li><span class="badge badge-terceros">Terceros</span> (ORDENES_SF): Se refiere a órdenes gestionadas con recursos externos o contratistas</li>
+    </ul>
+
+    <h3>¿Puedo cambiar un tipo de orden de "Propios" a "Terceros" después de crearlo?</h3>
+    <p><strong>Respuesta:</strong> No directamente. Debe eliminar el tipo de orden y crearlo nuevamente con la clasificación correcta. Por eso es importante verificar la clasificación al crear el tipo.</p>
+
+    <h3>¿Se pierden las etapas excluidas al eliminar un tipo de orden?</h3>
+    <p><strong>Respuesta:</strong> Sí. Al eliminar un tipo de orden, todas sus etapas excluidas también se eliminan. El sistema le pedirá confirmación para evitar eliminaciones accidentales.</p>
+
+    <h3>¿Qué formato de fecha se usa en las exportaciones?</h3>
+    <p><strong>Respuesta:</strong></p>
+    <ul>
+      <li><strong>Archivos CSV y JSON:</strong> YYYY-MM-DD (ej: 2025-11-18)</li>
+      <li><strong>Campo fechaExportacion en JSON:</strong> ISO 8601 con zona horaria (ej: 2025-11-18T10:30:00.000Z)</li>
+    </ul>
+
+    <h3>¿Puedo tener un tipo de orden sin etapas excluidas?</h3>
+    <p><strong>Respuesta:</strong> Sí, es completamente válido. No todos los tipos de órdenes requieren etapas excluidas. En la tabla de resumen aparecerá como "Sin etapas excluidas".</p>
+
+    <h3>¿Cómo sé cuántos tipos de órdenes tengo en cada categoría?</h3>
+    <p><strong>Respuesta:</strong> Cada tarjeta de categoría en la pantalla principal muestra una estadística con el número de tipos configurados (ej: "3 tipos configurados").</p>
+
+    <h3>¿El sistema guarda automáticamente los cambios?</h3>
+    <p><strong>Respuesta:</strong> No. Debe hacer clic en el botón <strong>💾 Guardar</strong> dentro de cada modal (tipos de órdenes o etapas excluidas) para aplicar los cambios. Los botones de exportación no guardan los cambios, solo exportan la configuración actual.</p>
+
+    <h3>¿Puedo usar el mismo código en diferentes categorías?</h3>
+    <p><strong>Respuesta:</strong> Sí, puede usar el mismo código (ej: "A0") en diferentes categorías si tiene sentido para su organización. Cada categoría mantiene su propia lista de tipos de órdenes independiente.</p>
+
+    <h3>¿Qué navegadores son compatibles?</h3>
+    <p><strong>Respuesta:</strong> El sistema funciona en:</p>
+    <ul>
+      <li>Google Chrome 90+</li>
+      <li>Mozilla Firefox 88+</li>
+      <li>Microsoft Edge 90+</li>
+      <li>Safari 14+</li>
+    </ul>
+
+    <h3>¿El sistema tiene límite de tipos de órdenes o etapas?</h3>
+    <p><strong>Respuesta:</strong> No hay límite técnico establecido. Sin embargo, se recomienda mantener una cantidad razonable (máximo 20-30 tipos por categoría) para facilitar la gestión.</p>
+  </div>
+
+  <!-- SECCIÓN 9: RESOLUCIÓN DE PROBLEMAS -->
+  <div class="section">
+    <h2>🔧 9. Resolución de Problemas</h2>
+
+    <h3>❌ No puedo abrir el modal de tipos de órdenes</h3>
+    <p><strong>Solución:</strong> Asegúrese de hacer clic directamente sobre la tarjeta de categoría (en cualquier parte de la tarjeta). Si el problema persiste, recargue la página (<kbd>F5</kbd> o <kbd>Ctrl</kbd>+<kbd>R</kbd>).</p>
+
+    <h3>🔄 Los cambios no se reflejan en la tabla de resumen</h3>
+    <p><strong>Solución:</strong> Debe hacer clic en el botón <strong>💾 Guardar</strong> dentro del modal correspondiente. Los cambios solo se aplican después de guardar. La tabla se actualiza automáticamente al cerrar el modal tras guardar.</p>
+
+    <h3>📊 La exportación CSV muestra caracteres extraños</h3>
+    <p><strong>Solución:</strong> El archivo está en UTF-8 con BOM. En Excel:</p>
+    <ul>
+      <li>Si se ven caracteres raros, abra Excel primero</li>
+      <li>Use <strong>Datos > Obtener datos externos > Desde texto/CSV</strong></li>
+      <li>Seleccione el archivo y elija codificación <strong>UTF-8</strong></li>
+      <li>En Google Sheets el archivo se importa correctamente de forma automática</li>
+    </ul>
+
+    <h3>💾 El archivo JSON/CSV no se descarga</h3>
+    <p><strong>Solución:</strong> Verifique que:</p>
+    <ul>
+      <li>Su navegador permita descargas automáticas</li>
+      <li>No tenga bloqueadores de pop-ups activos</li>
+      <li>Tenga permisos de escritura en la carpeta de descargas</li>
+      <li>No esté usando modo incógnito con restricciones</li>
+    </ul>
+
+    <h3>🎨 Los modales no se muestran correctamente</h3>
+    <p><strong>Solución:</strong></p>
+    <ul>
+      <li>Asegúrese de que su navegador esté actualizado</li>
+      <li>Desactive extensiones que puedan interferir con el CSS</li>
+      <li>Limpie la caché del navegador (<kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Del</kbd>)</li>
+      <li>Intente con otro navegador para descartar problemas de compatibilidad</li>
+    </ul>
+
+    <h3>❓ Agregué una etapa excluida pero no aparece</h3>
+    <p><strong>Solución:</strong></p>
+    <ul>
+      <li>Verifique que hizo clic en <strong>💾 Guardar</strong> después de agregar la etapa</li>
+      <li>Si canceló el cuadro de diálogo, la etapa no se agregó</li>
+      <li>Intente agregar la etapa nuevamente siguiendo todos los pasos</li>
+    </ul>
+
+    <h3>⚠️ Al hacer clic en Guardar no pasa nada</h3>
+    <p><strong>Solución:</strong> Abra la consola del navegador (<kbd>F12</kbd>) y revise si hay errores JavaScript. Si hay errores, reporte el problema al soporte técnico con una captura de pantalla de la consola.</p>
+
+    <h3>🖱️ Los botones no responden a los clics</h3>
+    <p><strong>Solución:</strong></p>
+    <ul>
+      <li>Recargue la página (<kbd>F5</kbd>)</li>
+      <li>Verifique que no haya otros modales abiertos en segundo plano</li>
+      <li>Cierre todos los modales y vuelva a intentar</li>
+      <li>Si el problema persiste, limpie la caché del navegador</li>
+    </ul>
+  </div>
+
+  <!-- SECCIÓN 10: MEJORES PRÁCTICAS -->
+  <div class="section">
+    <h2>⭐ 10. Mejores Prácticas</h2>
+
+    <h3>📝 Nomenclatura de Códigos</h3>
+    <ul>
+      <li>Use códigos cortos y descriptivos (2-3 caracteres)</li>
+      <li>Mantenga un patrón consistente dentro de cada categoría</li>
+      <li>Ejemplo: A0, A1, A2 para Altas; D1, D2, D3 para Cambio Domicilio</li>
+    </ul>
+
+    <h3>📋 Descripciones Claras</h3>
+    <ul>
+      <li>Use descripciones completas y específicas</li>
+      <li>Evite abreviaciones ambiguas</li>
+      <li>Incluya información relevante para el proceso</li>
+    </ul>
+
+    <h3>💾 Respaldos Periódicos</h3>
+    <ul>
+      <li>Exporte la configuración en JSON regularmente</li>
+      <li>Guarde los archivos con control de versiones (ej: agregar v1, v2 al nombre)</li>
+      <li>Mantenga un historial de cambios significativos</li>
+    </ul>
+
+    <h3>🔍 Verificación Antes de Guardar</h3>
+    <ul>
+      <li>Revise la tabla de resumen antes de exportar</li>
+      <li>Verifique que todos los tipos tengan la clasificación correcta (Propios/Terceros)</li>
+      <li>Confirme que las etapas excluidas sean las apropiadas</li>
+    </ul>
+
+    <h3>📊 Organización de Categorías</h3>
+    <ul>
+      <li>Agrupe tipos de órdenes relacionados en la misma categoría</li>
+      <li>Evite crear tipos duplicados en diferentes categorías</li>
+      <li>Mantenga un número manejable de tipos por categoría (idealmente 5-10)</li>
+    </ul>
+
+    <h3>🎯 Etapas Excluidas</h3>
+    <ul>
+      <li>Solo agregue etapas que realmente deban excluirse</li>
+      <li>Use descripciones claras para las etapas</li>
+      <li>Revise periódicamente si las exclusiones siguen siendo necesarias</li>
+    </ul>
+  </div>
+
+  <!-- PIE DE PÁGINA -->
+  <footer>
+    <p><strong>Configurador de Agrupador de Tareas - Área de Soporte</strong></p>
+    <p>Para soporte técnico o consultas, contacte al administrador del sistema</p>
+    <p style="margin-top: 10px; color: #999;">Versión 1.0 | Última actualización: Noviembre 2025</p>
+  </footer>
+</div>
+</body>
+</html>
