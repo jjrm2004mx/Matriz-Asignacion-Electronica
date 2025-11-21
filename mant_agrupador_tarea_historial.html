@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Asignación Electronica Por COPE</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+:root {
+  --color-primary: #0562b1;
+  --color-primary-dark: #034a83;
+  --color-header-bg: #0a6cbd;
+  --color-header-text: #ffffff;
+  --color-row-alt: #f5f9fc;
+  --color-border: #d1d9e0;
+  --color-hover: #e3f1ff;
+  --radius: 4px;
+  --font-stack: "Segoe UI", Arial, sans-serif;
+}
+body {
+  font-family: var(--font-stack);
+  margin: 0;
+  background: #ffffff;
+  color: #222;
+}
+header.filtros {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.5fr 1.2fr;
+  gap: 20px;
+  padding: 16px 20px 14px 20px;
+  background: linear-gradient(90deg,var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  color: var(--color-header-text);
+  align-items: end;
+}
+.help-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: #4caf50;
+  border: 2px solid #2e7d32;
+  border-radius: 50%;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.help-icon:hover {
+  background: #388e3c;
+  transform: scale(1.15);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+.help-icon:active {
+  transform: scale(0.95);
+}
+@media (max-width: 1200px) {
+  header.filtros {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+@media (max-width: 768px) {
+  header.filtros {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 10px 10px 10px;
+  }
+  .tipo-asignacion-wrapper > label {
+    font-size: 11px;
+  }
+  .toggle-option {
+    padding: 5px 12px;
+    font-size: 12px;
+  }
+}
+header.filtros label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 4px;
+}
+header.filtros select, header.filtros input[type="text"] {
+  width: 100%;
+  border: 1px solid #ffffff55;
+  background: #ffffff;
+  color: #222;
+  padding: 6px 8px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+header.filtros select.highlight {
+  animation: pulseHighlight 1.5s ease-in-out 3;
+  border: 2px solid #ff6b35;
+  box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+}
+/* Estilos para el selector de tipo de asignación - Toggle Switch */
+.tipo-asignacion-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  justify-content: flex-start;
+  align-items: center;
+}
+.tipo-asignacion-wrapper > label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+  text-align: center;
+}
+.toggle-switch-container {
+  position: relative;
+  display: inline-flex;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 3px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+.toggle-switch-container input {
+  display: none;
+}
+.toggle-option {
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 17px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #666;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+}
+.toggle-option:hover {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(1.02);
+}
+.toggle-switch-container input:not(:checked) ~ .toggle-option.propios,
+.toggle-switch-container input:checked ~ .toggle-option.terceros {
+  color: #666;
+  background: transparent;
+}
+.toggle-switch-container input:checked ~ .toggle-option.propios {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.5);
+  transform: scale(1.0);
+}
+.toggle-switch-container input:checked ~ .toggle-option.propios:hover {
+  box-shadow: 0 3px 10px rgba(33, 150, 243, 0.6);
+  transform: scale(1.02);
+}
+.toggle-switch-container input:not(:checked) ~ .toggle-option.terceros {
+  background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.5);
+  transform: scale(1.0);
+}
+.toggle-switch-container input:not(:checked) ~ .toggle-option.terceros:hover {
+  box-shadow: 0 3px 10px rgba(76, 175, 80, 0.6);
+  transform: scale(1.02);
+}
+@keyframes pulseHighlight {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.9);
+    transform: scale(1.02);
+  }
+}
+.search-wrapper {
+  position: relative;
+}
+.search-wrapper input[type="text"] {
+  padding-right: 32px;
+}
+.search-wrapper input[type="text"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: #f5f5f5;
+}
+.clear-search {
+  position: absolute;
+  right: 6px;
+  top: calc(50% + 10px);
+  transform: translateY(-50%);
+  background: #ff6b35;
+  border: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0;
+  width: 22px;
+  height: 22px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+.clear-search:hover {
+  background: #e85a28;
+  transform: translateY(-50%) scale(1.1);
+}
+.clear-search:active {
+  transform: translateY(-50%) scale(0.95);
+}
+.clear-search.visible {
+  display: flex;
+}
+main { 
+  padding: 12px 20px 20px 20px; 
+  max-width: 100%;
+  overflow-x: hidden;
+}
+@media (max-width: 768px) {
+  main {
+    padding: 8px 10px 20px 10px;
+  }
+}
+.table-wrap { 
+  overflow-x: auto; 
+  max-width: 100%;
+}
+.table-matriz {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+@media (max-width: 768px) {
+  .table-matriz {
+    font-size: 11px;
+  }
+  .table-matriz thead th {
+    padding: 6px 4px;
+    font-size: 10px;
+  }
+  .table-matriz tbody td, .table-matriz tbody th {
+    padding: 3px 4px;
+  }
+}
+.table-matriz thead th {
+  background: var(--color-header-bg);
+  color: var(--color-header-text);
+  padding: 10px 6px;
+  border: 1px solid var(--color-border);
+  text-align: center;
+  font-weight: 600;
+}
+.table-matriz thead tr:nth-child(2) th {
+  font-weight: 500;
+  font-size: 11px;
+  padding: 6px 4px;
+}
+.table-matriz tbody td, .table-matriz tbody th {
+  border: 1px solid var(--color-border);
+  padding: 4px 6px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.table-matriz tbody td.tipo-propios {
+  background: #e3f2fd !important;
+}
+.table-matriz tbody td.tipo-propios input[type="radio"] {
+  accent-color: #2196f3;
+}
+.table-matriz tbody td.tipo-terceros {
+  background: #e8f5e9 !important;
+}
+.table-matriz tbody td.tipo-terceros input[type="radio"] {
+  accent-color: #4caf50;
+}
+/* Selección de celda tipo Excel */
+.cell-selected {
+  outline: 3px solid #000 !important;
+  outline-offset: -3px !important;
+  position: relative;
+}
+/* Punto negro en la esquina para arrastrar (aparece con Ctrl) */
+.cell-selected.drag-enabled::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  cursor: crosshair;
+  z-index: 10;
+  border: 1px solid #fff;
+}
+/* Estilos durante el arrastre */
+.drag-source {
+  box-shadow: 0 0 0 3px #ffc107 !important;
+}
+.drag-hover {
+  box-shadow: 0 0 0 2px #ff6b35 inset !important;
+}
+.table-matriz tbody th { /* primera columna COPE */
+  background: #fafbfd;
+  font-weight: 600;
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  position: relative;
+  width: 160px;
+  min-width: 160px;
+  max-width: 160px;
+}
+.cope-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  font-size: 12px;
+}
+.icono-historial {
+  background: transparent;
+  border: none;
+  color: #0562b1;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px;
+  margin-left: 4px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.icono-historial:hover {
+  color: #034a83;
+  transform: scale(1.2);
+}
+.cope-limpiar {
+  background: #ff6b35;
+  border: none;
+  color: #ffffff;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 1px 4px;
+  border-radius: 3px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.2);
+  flex-shrink: 0;
+  line-height: 1;
+}
+.cope-limpiar:hover {
+  background: #e85a28;
+  transform: scale(1.1);
+}
+.cope-limpiar:active {
+  transform: scale(0.95);
+}
+/* Toggle Switch para COPE */
+.cope-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 18px;
+  margin-right: 6px;
+}
+.cope-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .3s;
+  border-radius: 18px;
+}
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 2px;
+  bottom: 2px;
+  background-color: white;
+  transition: .3s;
+  border-radius: 50%;
+}
+.cope-toggle input:checked + .toggle-slider {
+  background-color: #4caf50;
+}
+.cope-toggle input:checked + .toggle-slider:before {
+  transform: translateX(18px);
+}
+.cope-toggle input:disabled + .toggle-slider {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* Fila deshabilitada cuando el toggle está apagado */
+.cope-row-disabled td {
+  opacity: 0.4;
+  pointer-events: none;
+  background-color: #f0f0f0 !important;
+}
+.cope-row-disabled th {
+  opacity: 0.6;
+}
+.table-matriz tbody tr:nth-child(even) td, .table-matriz tbody tr:nth-child(even) th {
+  background: var(--color-row-alt);
+}
+.table-matriz tbody tr:hover td, .table-matriz tbody tr:hover th {
+  background: var(--color-hover);
+}
+.radio-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 11px;
+}
+.radio-cell label { cursor: pointer; }
+.radio-cell input[type="radio"] { cursor: pointer; }
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+button.guardar {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+button.guardar:hover { background: var(--color-primary-dark); }
+button.guardar:active { transform: scale(.97); }
+button.exportar {
+  background: #4caf50;
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+button.exportar:hover { background: #388e3c; }
+button.exportar:active { transform: scale(.97); }
+button.limpiar {
+  background: #ff6b35;
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  transition: background .2s, transform .15s;
+}
+button.limpiar:hover { background: #e85a28; }
+button.limpiar:active { transform: scale(.97); }
+button.guardar:disabled,
+button.exportar:disabled,
+button.limpiar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #cccccc;
+}
+button.guardar:disabled:hover,
+button.exportar:disabled:hover,
+button.limpiar:disabled:hover {
+  background: #cccccc;
+  transform: none;
+}
+.output-box {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  background: #f9fcff;
+  max-height: 180px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+.sticky-top-note {
+  font-size: 11px;
+  margin: 0 0 6px 0;
+  color: #555;
+}
+.info-message {
+  background: #e3f2fd;
+  border-left: 4px solid #2196f3;
+  padding: 16px 20px;
+  margin: 20px 0;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #1565c0;
+}
+.info-message.warning {
+  background: #fff3e0;
+  border-left-color: #ff9800;
+  color: #e65100;
+}
+.info-message-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+.info-message-content {
+  flex: 1;
+}
+.info-message-content strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 15px;
+}
+.table-wrap.hidden {
+  display: none;
+}
+.button-container.hidden {
+  display: none;
+}
+/* Modal flotante */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.visible {
+  display: flex;
+}
+.modal-content {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 700px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.modal-content.modal-ayuda {
+  width: 80vw;
+  max-width: 80vw;
+  height: 80vh;
+  max-height: 80vh;
+}
+.modal-content.modal-historial {
+  width: 85vw;
+  max-width: 1000px;
+  max-height: 85vh;
+}
+.timeline-container {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline-item {
+  position: relative;
+  padding-bottom: 30px;
+  border-left: 2px solid #0562b1;
+  padding-left: 25px;
+  margin-left: 10px;
+}
+.timeline-item:last-child {
+  border-left: 2px solid transparent;
+}
+.timeline-marker {
+  position: absolute;
+  left: -11px;
+  top: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #0562b1;
+  border: 3px solid #ffffff;
+  box-shadow: 0 0 0 3px #e3f2fd;
+}
+.timeline-content {
+  background: #f8f9fa;
+  border: 1px solid #d1d9e0;
+  border-radius: 6px;
+  padding: 15px;
+}
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d1d9e0;
+}
+.timeline-id {
+  font-weight: 700;
+  color: #0562b1;
+  font-size: 14px;
+}
+.timeline-fecha {
+  font-size: 12px;
+  color: #666;
+}
+.timeline-usuario {
+  font-size: 12px;
+  color: #888;
+  margin-top: 5px;
+}
+.timeline-cambios {
+  margin-top: 10px;
+}
+.cambio-item {
+  background: #ffffff;
+  border-left: 3px solid #4caf50;
+  padding: 8px 12px;
+  margin-bottom: 6px;
+  border-radius: 3px;
+  font-size: 13px;
+}
+.cambio-item.modificado {
+  border-left-color: #ff9800;
+}
+.cambio-label {
+  font-weight: 600;
+  color: #333;
+  margin-right: 6px;
+}
+.cambio-valor {
+  color: #666;
+}
+.cambio-anterior {
+  text-decoration: line-through;
+  color: #f44336;
+  margin-right: 8px;
+}
+.cambio-nuevo {
+  color: #4caf50;
+  font-weight: 600;
+}
+.historial-empty {
+  text-align: center;
+  padding: 40px;
+  color: #999;
+  font-style: italic;
+}
+.historial-loading {
+  text-align: center;
+  padding: 40px;
+  color: #0562b1;
+}
+.modal-header {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  padding: 16px 20px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  color: var(--color-header-text);
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+.modal-body pre {
+  background: #f5f9fc;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  padding: 16px;
+  margin: 0;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #222;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.modal-footer {
+  padding: 16px 20px;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.modal-footer button {
+  background: var(--color-primary);
+  color: var(--color-header-text);
+  border: none;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-footer button:hover {
+  background: var(--color-primary-dark);
+}
+.modal-ayuda-body {
+  padding: 0;
+  flex: 1;
+  overflow: hidden;
+}
+.modal-ayuda-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.btn-fullscreen {
+  background: transparent;
+  border: none;
+  color: var(--color-header-text);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+  margin-right: 8px;
+}
+.btn-fullscreen:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+.modal-content.fullscreen {
+  width: 100vw !important;
+  max-width: 100vw !important;
+  height: 100vh !important;
+  max-height: 100vh !important;
+  border-radius: 0 !important;
+}
+</style>
+</head>
+<body>
+  <header class="filtros">
+    <div>
+      <label for="division">Division</label>
+      <select id="division">
+        <option value="">(Todas)</option>
+        <option>División Norte</option>
+        <option>División Sur</option>
+        <option>División Centro</option>
+      </select>
+    </div>
+    <div>
+      <label for="area">Área</label>
+      <select id="area">
+        <option value="">(Todas)</option>
+        <option>Red</option>
+        <option>Operaciones</option>
+        <option>Atención</option>
+      </select>
+    </div>
+    <div class="search-wrapper">
+      <label for="buscar">Buscar</label>
+      <input type="text" id="buscar" placeholder="Filtrar COPE..." disabled />
+      <button type="button" class="clear-search" id="clearSearch" title="Eliminar filtrado">✕</button>
+    </div>
+    <div class="tipo-asignacion-wrapper">
+      <label>Bucket</label>
+      <div class="toggle-switch-container">
+        <input type="checkbox" id="toggleAsignacion">
+        <span class="toggle-option propios">Propios</span>
+        <span class="toggle-option terceros">Terceros</span>
+      </div>
+    </div>
+  </header>
+  <main>
+    <div id="infoMessage" class="info-message">
+      <span class="info-message-icon">ℹ️</span>
+      <div class="info-message-content">
+        <strong>Seleccione División y Área para cargar los COPEs</strong>
+        Por favor, seleccione una División y un Área en los filtros superiores para ver la lista de COPEs disponibles.
+      </div>
+    </div>
+    <p class="sticky-top-note">
+      Seleccione las opciones correspondientes para cada COPE en las categorías: Altas, Cambio Domicilio y Migraciones.
+      <a href="#" class="help-icon" title="Manual de Usuario" id="btnAyuda">?</a>
+    </p>
+    <div class="table-wrap hidden" id="tableWrap">
+      <table class="table-matriz" id="matriz">
+        <thead id="matrizHeader">
+          <!-- El encabezado se genera dinámicamente -->
+        </thead>
+        <tbody id="matrizBody">
+          <!-- COPEs de ejemplo, puede sustituir por las reales -->
+        </tbody>
+      </table>
+    </div>
+    <div class="button-container hidden" id="buttonContainer">
+      <button class="limpiar" id="btnLimpiar" type="button" disabled>🗑️ Limpiar Todo</button>
+      <button class="exportar" id="btnExportarCSV" type="button" disabled>📊 Exportar CSV</button>
+      <button class="guardar" id="btnGuardar" type="button" disabled>💾 Guardar</button>
+    </div>
+  </main>
+  
+  <!-- Modal flotante para mostrar JSON -->
+  <div class="modal-overlay" id="modalJSON">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>📋 Resultado JSON</h3>
+        <button class="modal-close" id="modalClose" title="Cerrar">×</button>
+      </div>
+      <div class="modal-body">
+        <pre id="jsonContent"></pre>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCerrarModal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Manual de Usuario -->
+  <div class="modal-overlay" id="modalAyuda">
+    <div class="modal-content modal-ayuda" id="modalAyudaContent">
+      <div class="modal-header">
+        <h3>📖 Manual de Usuario</h3>
+        <div style="display: flex; align-items: center;">
+          <button class="btn-fullscreen" id="btnFullscreen" title="Pantalla completa">⛶</button>
+          <button class="modal-close" id="modalAyudaClose" title="Cerrar">×</button>
+        </div>
+      </div>
+      <div class="modal-body modal-ayuda-body">
+        <iframe id="iframeAyuda" src="" frameborder="0"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCerrarModalAyuda">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Historial de Auditoría -->
+  <div class="modal-overlay" id="modalHistorial">
+    <div class="modal-content modal-ayuda" id="modalHistorialContent">
+      <div class="modal-header">
+        <h3 id="tituloModalHistorial">📋 Visor de Auditoría</h3>
+        <div style="display: flex; align-items: center;">
+          <button class="btn-fullscreen" id="btnFullscreenHistorial" title="Pantalla completa">⛶</button>
+          <button class="modal-close" id="modalHistorialClose" title="Cerrar">×</button>
+        </div>
+      </div>
+      <div class="modal-body modal-ayuda-body">
+        <iframe id="iframeHistorial" src="" frameborder="0"></iframe>
+      </div>
+      <div class="modal-footer">
+        <button id="btnCerrarModalHistorial">Cerrar</button>
+      </div>
+    </div>
+  </div>
+<script>
+  console.log('🎬 ========================================');
+  console.log('🎬 INICIO DEL SCRIPT - JavaScript cargado');
+  console.log('🎬 ========================================');
+  
+  // ============ CONFIGURACIÓN DE DATOS ============
+  // Lista de COPEs a mostrar en las filas
+  const copes1 = [
+    'COPE 1', 'COPE 2', 'COPE 3', 'COPE 4', 'COPE 5', 'COPE 6', 'COPE 7', 'COPE 8',
+    'COPE 11', 'COPE 12', 'COPE 13', 'COPE 14', 'COPE 15', 'COPE 16', 'COPE 17', 'COPE 18',
+    'COPE 21', 'COPE 22', 'COPE 23', 'COPE 24', 'COPE 25', 'COPE 26', 'COPE 27', 'COPE 28'
+    
+  ];
+
+
+
+   const copes = [
+    'COPE 1', 'COPE 2', 'COPE 3', 'COPE 4', 'COPE 5', 'COPE 6', 'COPE 7', 'COPE 8',
+    'COPE 11', 'COPE 12', 'COPE 13', 'COPE 14', 'COPE 15', 'COPE 16', 'COPE 17', 'COPE 18',
+    'COPE 21', 'COPE 22', 'COPE 23', 'COPE 24', 'COPE 25', 'COPE 26', 'COPE 27', 'COPE 28',
+    'COPE 31', 'COPE 32', 'COPE 13', 'COPE 14', 'COPE 15', 'COPE 16', 'COPE 17', 'COPE 18',
+    'COPE 41', 'COPE 42', 'COPE 23', 'COPE 24', 'COPE 25', 'COPE 26', 'COPE 27', 'COPE 28'
+    
+    
+  ];
+  
+  
+  // Definición de subcolumnas por categoría (se cargarán dinámicamente desde el backend)
+  // Formato: [['codigo', 'TIPO'], ...] donde TIPO puede ser 'ORDENES' o 'ORDENES_SF'
+  let columnasAltas = [['A0','ORDENES'],['A9','ORDENES'], ['AT','ORDENES_SF']]; // Valores por defecto
+  let columnasCambioDomicilio = [['D1','ORDENES'], ['D2','ORDENES_SF'], ['D3','ORDENES']]; // Valores por defecto
+  let columnasMigraciones = [['TS','ORDENES'],['TV','ORDENES_SF']]; // Valores por defecto
+  
+  // Array de categorías completo con metadatos
+  let categoriasCompletas = [];
+  
+  // Construcción automática del array de subcategorías
+  let subcategorias = [
+    ...columnasAltas.map(([sub, tipo]) => ({ categoria: 'Altas', sub, tipo })),
+    ...columnasCambioDomicilio.map(([sub, tipo]) => ({ categoria: 'CambioDomicilio', sub, tipo })),
+    ...columnasMigraciones.map(([sub, tipo]) => ({ categoria: 'Migraciones', sub, tipo }))
+  ];
+  
+  // Función para cargar categorías y subcategorías desde el endpoint
+  async function cargarAgrupadorTareas() {
+    try {
+      console.log('🔄 Cargando configuración de agrupador de tareas...');
+      console.log('📡 URL: http://localhost:8080/json-documents/agrupador-tareas');
+      
+      const response = await fetch('http://localhost:8080/json-documents/agrupador-tareas', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log(`📊 Response status: ${response.status}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const jsonResponse = await response.json();
+      console.log('📦 Respuesta completa del servidor:', jsonResponse);
+      
+      if (jsonResponse.configuracion && Array.isArray(jsonResponse.configuracion.categorias)) {
+        categoriasCompletas = jsonResponse.configuracion.categorias;
+        
+        console.log('📋 Metadatos:', jsonResponse.metadatos);
+        console.log(`📊 Total categorías: ${jsonResponse.metadatos.totalCategorias}`);
+        console.log(`📊 Total subcategorías: ${jsonResponse.metadatos.totalSubcategorias}`);
+        console.log(`📅 Versión: ${jsonResponse.metadatos.version}`);
+        console.log(`⏰ Última actualización: ${jsonResponse.metadatos.fechaActualizacion}`);
+        
+        // Procesar cada categoría
+        categoriasCompletas.forEach((categoria, index) => {
+          console.log(`\n📁 Categoría ${index + 1}: ${categoria.nombre} (${categoria.codigo})`);
+          console.log(`   Orden: ${categoria.orden}, Subcategorías: ${categoria.subcategorias.length}`);
+          
+          // Limpiar arrays existentes
+          if (categoria.nombre === 'Altas') {
+            columnasAltas = [];
+          } else if (categoria.nombre === 'CambioDomicilio') {
+            columnasCambioDomicilio = [];
+          } else if (categoria.nombre === 'Migraciones') {
+            columnasMigraciones = [];
+          }
+          
+          // Procesar subcategorías
+          categoria.subcategorias.forEach((sub, subIndex) => {
+            console.log(`     ${subIndex + 1}. ${sub.codigo} - ${sub.descripcion} [${sub.modulo}]`);
+            
+            const subcategoria = [sub.codigo, sub.modulo];
+            
+            if (categoria.nombre === 'Altas') {
+              columnasAltas.push(subcategoria);
+            } else if (categoria.nombre === 'CambioDomicilio') {
+              columnasCambioDomicilio.push(subcategoria);
+            } else if (categoria.nombre === 'Migraciones') {
+              columnasMigraciones.push(subcategoria);
+            }
+          });
+        });
+        
+        // Reconstruir array de subcategorías
+        subcategorias = [
+          ...columnasAltas.map(([sub, tipo]) => ({ categoria: 'Altas', sub, tipo })),
+          ...columnasCambioDomicilio.map(([sub, tipo]) => ({ categoria: 'CambioDomicilio', sub, tipo })),
+          ...columnasMigraciones.map(([sub, tipo]) => ({ categoria: 'Migraciones', sub, tipo }))
+        ];
+        
+        console.log('\n✅ Configuración cargada exitosamente');
+        console.log(`📊 Altas: ${columnasAltas.length} subcategorías`);
+        console.log(`📊 Cambio Domicilio: ${columnasCambioDomicilio.length} subcategorías`);
+        console.log(`📊 Migraciones: ${columnasMigraciones.length} subcategorías`);
+        console.log(`📊 Total subcategorías: ${subcategorias.length}`);
+        
+        // Regenerar encabezado de la tabla con las nuevas categorías
+        regenerarEncabezado();
+        
+        return true;
+      } else {
+        console.warn('⚠️ Formato de respuesta inesperado');
+        return false;
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar agrupador de tareas:', error);
+      console.error('❌ Detalles del error:', error.message);
+      
+      if (error.message === 'Failed to fetch') {
+        console.warn('⚠️ POSIBLE ERROR DE CORS o servidor no disponible');
+        console.warn('💡 El backend debe estar corriendo en http://localhost:8080');
+      }
+      
+      console.log('🔧 Usando configuración estática por defecto');
+      return false;
+    }
+  }
+  // ===============================================
+  
+  // Función para regenerar el encabezado cuando cambian las categorías
+  function regenerarEncabezado() {
+    const thead = document.getElementById('matrizHeader');
+    if (thead) {
+      thead.innerHTML = '';
+      generarEncabezado();
+      console.log('✅ Encabezado regenerado con nuevas categorías');
+    }
+  }
+  
+  // Generar encabezado dinámicamente
+  function generarEncabezado() {
+    const thead = document.getElementById('matrizHeader');
+    
+    // Primera fila: categorías principales
+    const tr1 = document.createElement('tr');
+    const thCope = document.createElement('th');
+    thCope.rowSpan = 2;
+    thCope.textContent = 'COPE';
+    tr1.appendChild(thCope);
+    
+    const thAltas = document.createElement('th');
+    thAltas.colSpan = columnasAltas.length;
+    thAltas.textContent = 'Altas';
+    tr1.appendChild(thAltas);
+    
+    const thCambio = document.createElement('th');
+    thCambio.colSpan = columnasCambioDomicilio.length;
+    thCambio.textContent = 'Cambio Domicilio';
+    tr1.appendChild(thCambio);
+    
+    const thMigra = document.createElement('th');
+    thMigra.colSpan = columnasMigraciones.length;
+    thMigra.textContent = 'Migraciones';
+    tr1.appendChild(thMigra);
+    
+    thead.appendChild(tr1);
+    
+    // Segunda fila: subcolumnas (solo mostrar el código, no el tipo)
+    const tr2 = document.createElement('tr');
+    [...columnasAltas, ...columnasCambioDomicilio, ...columnasMigraciones].forEach(([sub, tipo]) => {
+      const th = document.createElement('th');
+      th.textContent = sub;
+      tr2.appendChild(th);
+    });
+    thead.appendChild(tr2);
+  }
+  
+  // Generar filas del cuerpo
+  function generarFilas() {
+    const tbody = document.getElementById('matrizBody');
+    copes.forEach((cope, ci) => {
+      const tr = document.createElement('tr');
+      const th = document.createElement('th');
+      
+      // Crear contenedor para COPE y botón limpiar
+      const divCope = document.createElement('div');
+      divCope.className = 'cope-header-content';
+      
+      // Crear toggle switch
+      const labelToggle = document.createElement('label');
+      labelToggle.className = 'cope-toggle';
+      labelToggle.title = `Activar/Desactivar ${cope}`;
+      
+      const inputToggle = document.createElement('input');
+      inputToggle.type = 'checkbox';
+      inputToggle.checked = true; // Por defecto activado
+      inputToggle.dataset.cope = cope;
+      
+      const spanSlider = document.createElement('span');
+      spanSlider.className = 'toggle-slider';
+      
+      labelToggle.appendChild(inputToggle);
+      labelToggle.appendChild(spanSlider);
+      
+      // Evento para habilitar/deshabilitar fila
+      inputToggle.addEventListener('change', function() {
+        if (this.checked) {
+          tr.classList.remove('cope-row-disabled');
+        } else {
+          tr.classList.add('cope-row-disabled');
+        }
+      });
+      
+      const spanCope = document.createElement('span');
+      spanCope.textContent = cope;
+      
+      // Botón de historial
+      const btnHistorial = document.createElement('button');
+      btnHistorial.className = 'icono-historial';
+      btnHistorial.innerHTML = '📋';
+      btnHistorial.title = `Ver historial de ${cope}`;
+      btnHistorial.type = 'button';
+      btnHistorial.addEventListener('click', (e) => {
+        e.stopPropagation();
+        verHistorialCope(cope);
+      });
+      
+      const btnLimpiarCope = document.createElement('button');
+      btnLimpiarCope.className = 'cope-limpiar';
+      btnLimpiarCope.innerHTML = '🗑️';
+      btnLimpiarCope.title = `Limpiar selecciones de ${cope}`;
+      btnLimpiarCope.type = 'button';
+      
+      // Evento para limpiar solo este COPE
+      btnLimpiarCope.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const confirmacion = confirm(`⚠️ ¿Está seguro que desea eliminar TODAS las selecciones de ${cope}?\n\nPresione "Aceptar" para continuar o "Cancelar" para mantener las selecciones.`);
+        
+        if (confirmacion) {
+          // Deseleccionar solo los radio buttons de esta fila
+          tr.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+            radio.checked = false;
+            radio.dataset.wasChecked = 'false';
+          });
+          
+          // Quitar colores de las celdas de esta fila
+          tr.querySelectorAll('td.tipo-propios, td.tipo-terceros').forEach(celda => {
+            celda.classList.remove('tipo-propios', 'tipo-terceros');
+          });
+        }
+      });
+      
+      divCope.appendChild(spanCope);
+      divCope.appendChild(btnHistorial);
+      divCope.appendChild(btnLimpiarCope);
+      divCope.appendChild(labelToggle);
+      th.appendChild(divCope);
+      tr.appendChild(th);
+      subcategorias.forEach((item, idx) => {
+        const td = document.createElement('td');
+        const div = document.createElement('div');
+        div.className = 'radio-cell';
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const radioId = `r_${cope}_${item.categoria}_${item.sub}`;
+        const radio = document.createElement('input');
+        radio.type = 'radio';
+        radio.name = radioName;
+        radio.id = radioId;
+        radio.value = item.sub;
+        radio.dataset.tipo = item.tipo; // Guardar el tipo en data attribute
+        radio.checked = (ci+idx)%2===0;
+        
+        // Si está seleccionado inicialmente, aplicar tipo de recurso random
+        if (radio.checked) {
+          const tiposRecurso = ['ORDENES', 'ORDENES_SF'];
+          const tipoRandom = tiposRecurso[Math.floor(Math.random() * tiposRecurso.length)];
+          radio.dataset.wasChecked = 'true';
+          
+          // Aplicar estilo visual según el tipo aleatorio
+          if (tipoRandom === 'ORDENES') {
+            td.classList.add('tipo-propios');
+          } else {
+            td.classList.add('tipo-terceros');
+          }
+        }
+        
+        // Agregar evento click para validar tipo de recurso y mostrar alert
+        radio.addEventListener('click', function(e) {
+          const toggleAsignacion = document.getElementById('toggleAsignacion');
+          const tipoRecurso = toggleAsignacion.checked ? 'ORDENES' : 'ORDENES_SF';
+          
+          // Si el radio ya estaba seleccionado, deseleccionarlo y quitar estilos
+          if (this.dataset.wasChecked === 'true') {
+            this.checked = false;
+            this.dataset.wasChecked = 'false';
+            td.classList.remove('tipo-propios', 'tipo-terceros');
+            return;
+          }
+          
+          if (!tipoRecurso) {
+            e.preventDefault();
+            this.checked = false;
+            alert('⚠️ Debe seleccionar un Tipo de Asignación (Propios o Terceros) antes de marcar opciones en la matriz.');
+            
+            // Iluminar el selector
+            tipoRecursoSelect.classList.add('highlight');
+            tipoRecursoSelect.focus();
+            
+            // Remover la iluminación después de la animación
+            setTimeout(() => {
+              tipoRecursoSelect.classList.remove('highlight');
+            }, 4500);
+            
+            return false;
+          }
+          
+          // Aplicar estilo visual según el tipo de recurso
+          td.classList.remove('tipo-propios', 'tipo-terceros');
+          if (tipoRecurso === 'ORDENES') {
+            td.classList.add('tipo-propios');
+          } else if (tipoRecurso === 'ORDENES_SF') {
+            td.classList.add('tipo-terceros');
+          }
+          
+          // Marcar como seleccionado para permitir deselección en próximo click
+          this.dataset.wasChecked = 'true';
+          
+          const tipoRecursoTexto = tipoRecurso === 'ORDENES' ? 'Propios' : 'Terceros';
+          const divisionSelect = document.getElementById('division');
+          const areaSelect = document.getElementById('area');
+          const divisionTexto = divisionSelect.value || '(Todas)';
+          const areaTexto = areaSelect.value || '(Todas)';
+          
+          alert(`División: ${divisionTexto}\n\nÁrea: ${areaTexto}\n\nCOPE: ${cope}\n\nCategoría: ${item.categoria}\n\nValor: ${item.sub}\n\nTipo de Recurso: ${tipoRecursoTexto}`);
+        });
+        div.appendChild(radio);
+        td.appendChild(div);
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+  }
+  
+  // ============ FUNCIONALIDAD DE SELECCIÓN TIPO EXCEL ============
+  let selectedCell = null;
+  let isCtrlPressed = false;
+  
+  // Agregar listener a TODAS las celdas TD directamente
+  function aplicarSeleccionCeldas() {
+    console.log('🚀 Ejecutando aplicarSeleccionCeldas...');
+    const todasLasCeldas = document.querySelectorAll('#matriz tbody td');
+    console.log('🔍 Total celdas encontradas:', todasLasCeldas.length);
+    
+    todasLasCeldas.forEach((td, index) => {
+      // Solo si tiene radio button
+      const radio = td.querySelector('input[type="radio"]');
+      if (radio) {
+        td.addEventListener('click', function(e) {
+          
+          // Quitar selección de todas las celdas
+          document.querySelectorAll('#matriz tbody td').forEach(cell => {
+            cell.classList.remove('cell-selected', 'drag-enabled');
+          });
+          
+          // Agregar selección a esta celda
+          this.classList.add('cell-selected');
+          selectedCell = this;
+          
+          // Si Ctrl está presionado, mostrar punto negro inmediatamente
+          if (isCtrlPressed) {
+            this.classList.add('drag-enabled');
+          }
+          
+          // Obtener información de la celda
+          const radioActual = this.querySelector('input[type="radio"]');
+          const radioName = radioActual ? radioActual.name : 'Sin nombre';
+          const radioChecked = radioActual && radioActual.checked ? 'Marcado' : 'No marcado';
+          const tipoClase = this.classList.contains('tipo-propios') ? 'Propios' : 
+                           this.classList.contains('tipo-terceros') ? 'Terceros' : 'Sin tipo';
+          
+          // Obtener COPE de la fila
+          const tr = this.closest('tr');
+          const copeSpan = tr.querySelector('th .cope-header-content span');
+          const cope = copeSpan ? copeSpan.textContent.trim() : 'Desconocido';
+          
+          console.log('📋 Celda seleccionada:', cope, radioName, radioChecked, tipoClase);
+        });
+        
+        // Agregar cursor pointer para indicar que es clickeable
+        td.style.cursor = 'cell';
+      }
+    });
+    
+    console.log('✅ Listeners aplicados a todas las celdas con radio');
+  }
+  
+  // ============ FUNCIONALIDAD DE ARRASTRE TIPO EXCEL ============
+  let dragSourceCell = null;
+  let draggedCells = [];
+  let isDragging = false;
+  
+  // Detectar tecla Control
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Control') {
+      isCtrlPressed = true;
+      console.log('🎮 Control presionado');
+      // Si hay una celda seleccionada, mostrar el punto negro
+      const selected = document.querySelector('.cell-selected');
+      if (selected) {
+        selected.classList.add('drag-enabled');
+        console.log('✅ Punto negro habilitado');
+      }
+    }
+  });
+  
+  document.addEventListener('keyup', function(e) {
+    if (e.key === 'Control') {
+      isCtrlPressed = false;
+      console.log('🎮 Control liberado');
+      // Quitar el punto negro
+      const selected = document.querySelector('.cell-selected');
+      if (selected) {
+        selected.classList.remove('drag-enabled');
+      }
+    }
+  });
+  
+  // Detectar inicio de arrastre desde el punto negro
+  document.getElementById('matriz').addEventListener('mousedown', function(e) {
+    const selected = document.querySelector('.cell-selected.drag-enabled');
+    
+    if (isCtrlPressed && selected) {
+      const rect = selected.getBoundingClientRect();
+      const offsetX = e.clientX - rect.left;
+      const offsetY = e.clientY - rect.top;
+      
+      // Verificar si el click está en la esquina inferior derecha (área del punto negro)
+      const enEsquina = offsetX > rect.width - 15 && offsetY > rect.height - 15;
+      
+      if (enEsquina) {
+        console.log('🎯 Arrastre iniciado desde punto negro');
+        isDragging = true;
+        dragSourceCell = selected;
+        draggedCells = [selected];
+        selected.classList.add('drag-source');
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+      }
+    }
+  });
+  
+  // Detectar movimiento sobre celdas
+  document.getElementById('matriz').addEventListener('mousemove', function(e) {
+    if (isDragging && dragSourceCell) {
+      const td = e.target.closest('td');
+      if (td && td !== dragSourceCell && td.querySelector('input[type="radio"]')) {
+        if (!draggedCells.includes(td)) {
+          draggedCells.push(td);
+          td.classList.add('drag-hover');
+          console.log('➕ Celda agregada al arrastre:', draggedCells.length);
+        }
+      }
+    }
+  });
+  
+  // Detectar fin de arrastre
+  document.addEventListener('mouseup', function() {
+    if (isDragging && dragSourceCell && draggedCells.length > 1) {
+      console.log('🏁 Fin del arrastre. Total celdas:', draggedCells.length);
+      
+      const tipoOrigen = dragSourceCell.classList.contains('tipo-propios') ? 'Propios' : 'Terceros';
+      const confirmacion = confirm(
+        `🎨 Copiar Configuración\n\n` +
+        `¿Desea aplicar el tipo de recurso "${tipoOrigen}" a ${draggedCells.length - 1} celda(s) seleccionada(s)?\n\n` +
+        `Esto marcará los radio buttons y aplicará el mismo color.`
+      );
+      
+      if (confirmacion) {
+        const tipoClase = dragSourceCell.classList.contains('tipo-propios') ? 'tipo-propios' : 'tipo-terceros';
+        
+        draggedCells.forEach((cell, index) => {
+          if (index > 0) {
+            const radio = cell.querySelector('input[type="radio"]');
+            if (radio) {
+              radio.checked = true;
+              radio.dataset.wasChecked = 'true';
+              cell.classList.remove('tipo-propios', 'tipo-terceros');
+              cell.classList.add(tipoClase);
+            }
+          }
+        });
+        
+        console.log('✅ Configuración aplicada');
+      }
+    }
+    
+    // Limpiar estados visuales
+    if (isDragging) {
+      draggedCells.forEach(cell => {
+        cell.classList.remove('drag-hover', 'drag-source');
+      });
+    }
+    
+    isDragging = false;
+    dragSourceCell = null;
+    draggedCells = [];
+    document.body.style.userSelect = '';
+  });
+  
+  // ===========================================================================
+  
+  // Función para cargar divisiones desde el endpoint
+  async function cargarDivisiones(usuario = 'JJRM2004') {
+    const divisionSelect = document.getElementById('division');
+    
+    if (!divisionSelect) {
+      console.error('❌ No se encontró el elemento select con id="division"');
+      return;
+    }
+    
+    try {
+      console.log(`🔄 Cargando divisiones para usuario: ${usuario}...`);
+      console.log(`📡 URL: http://localhost:8080/json-documents/divisiones`);
+      
+      const response = await fetch('http://localhost:8080/json-documents/divisiones', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          usuario: usuario
+        })
+      });
+      
+      console.log(`📊 Response status: ${response.status}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const jsonResponse = await response.json();
+      console.log('📦 Respuesta completa del servidor:', jsonResponse);
+      
+      if (jsonResponse.success && Array.isArray(jsonResponse.data)) {
+        // Limpiar opciones existentes
+        divisionSelect.innerHTML = '<option value="">(Todas)</option>';
+        
+        console.log(`🔢 Total de divisiones recibidas: ${jsonResponse.data.length}`);
+        
+        // Agregar las divisiones del endpoint
+        let divisionesAgregadas = 0;
+        jsonResponse.data.forEach((division, index) => {
+          console.log(`  ${index + 1}. ${division.nombre} - Activo: ${division.activo}`);
+          
+          if (division.activo) {
+            const option = document.createElement('option');
+            option.value = division.codigo || division.nombre;
+            option.textContent = division.nombre;
+            option.dataset.id = division.id;
+            option.dataset.codigo = division.codigo;
+            divisionSelect.appendChild(option);
+            divisionesAgregadas++;
+          }
+        });
+        
+        console.log(`✅ ${divisionesAgregadas} divisiones activas agregadas al select`);
+        console.log(`📝 ${jsonResponse.message}`);
+        console.log(`⏰ Timestamp: ${jsonResponse.timestamp}`);
+      } else {
+        console.warn('⚠️ Formato de respuesta inesperado:', jsonResponse);
+        console.warn('⚠️ success:', jsonResponse.success);
+        console.warn('⚠️ data es array:', Array.isArray(jsonResponse.data));
+        cargarDivisionesEstaticas();
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar divisiones:', error);
+      console.error('❌ Detalles del error:', error.message);
+      
+      // Detectar si es un error de CORS
+      if (error.message === 'Failed to fetch') {
+        console.warn('⚠️ POSIBLE ERROR DE CORS');
+        console.warn('💡 Solución: El backend debe incluir los siguientes headers:');
+        console.warn('   Access-Control-Allow-Origin: *');
+        console.warn('   Access-Control-Allow-Methods: POST, GET, OPTIONS');
+        console.warn('   Access-Control-Allow-Headers: Content-Type');
+        console.warn('');
+        console.warn('📝 Alternativa temporal: Ejecutar el HTML desde un servidor local');
+        console.warn('   Ejemplo: python -m http.server 3000');
+        console.warn('   O usar Live Server en VS Code');
+      }
+      
+      console.log('🔧 Usando divisiones estáticas como fallback');
+      cargarDivisionesEstaticas();
+    }
+  }
+  
+  // Función de fallback con divisiones estáticas
+  function cargarDivisionesEstaticas() {
+    const divisionSelect = document.getElementById('division');
+    divisionSelect.innerHTML = `
+      <option value="">(Todas)</option>
+      <option data-codigo="DN">División Norte</option>
+      <option data-codigo="DS">División Sur</option>
+      <option data-codigo="DC">División Centro</option>
+    `;
+  }
+  
+  // Función para cargar áreas desde el endpoint
+  async function cargarAreas(codigoDivision) {
+    const areaSelect = document.getElementById('area');
+    
+    if (!areaSelect) {
+      console.error('❌ No se encontró el elemento select con id="area"');
+      return;
+    }
+    
+    // Si no hay división seleccionada, mostrar todas
+    if (!codigoDivision || codigoDivision === '') {
+      console.log('ℹ️ Sin división seleccionada, mostrando opción (Todas)');
+      areaSelect.innerHTML = '<option value="">(Todas)</option>';
+      return;
+    }
+    
+    try {
+      console.log(`🔄 Cargando áreas para división: ${codigoDivision}...`);
+      console.log(`📡 URL: http://localhost:8080/json-documents/areas`);
+      
+      const response = await fetch('http://localhost:8080/json-documents/areas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          codigoDivision: codigoDivision
+        })
+      });
+      
+      console.log(`📊 Response status: ${response.status}`);
+      
+      if (response.status === 404) {
+        const errorData = await response.json();
+        console.warn(`⚠️ ${errorData.error}`);
+        areaSelect.innerHTML = '<option value="">(Todas)</option>';
+        return;
+      }
+      
+      if (response.status === 400) {
+        const errorData = await response.json();
+        console.error(`❌ ${errorData.error}`);
+        cargarAreasEstaticas();
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const jsonResponse = await response.json();
+      console.log('📦 Respuesta completa del servidor:', jsonResponse);
+      
+      if (jsonResponse.success && Array.isArray(jsonResponse.areas)) {
+        // Limpiar opciones existentes
+        areaSelect.innerHTML = '<option value="">(Todas)</option>';
+        
+        console.log(`🔢 Total de áreas recibidas: ${jsonResponse.areas.length}`);
+        console.log(`📍 División: ${jsonResponse.nombreDivision} (${jsonResponse.codigoDivision})`);
+        
+        // Agregar las áreas del endpoint
+        let areasAgregadas = 0;
+        jsonResponse.areas.forEach((area, index) => {
+          console.log(`  ${index + 1}. ${area.nombre} - Activo: ${area.activo}`);
+          
+          if (area.activo) {
+            const option = document.createElement('option');
+            option.value = area.codigo || area.nombre;
+            option.textContent = area.nombre;
+            option.dataset.id = area.id;
+            option.dataset.codigo = area.codigo;
+            areaSelect.appendChild(option);
+            areasAgregadas++;
+          }
+        });
+        
+        console.log(`✅ ${areasAgregadas} áreas activas agregadas al select`);
+        console.log(`📝 ${jsonResponse.message}`);
+        console.log(`⏰ Timestamp: ${jsonResponse.timestamp}`);
+      } else {
+        console.warn('⚠️ Formato de respuesta inesperado:', jsonResponse);
+        console.warn('⚠️ success:', jsonResponse.success);
+        console.warn('⚠️ areas es array:', Array.isArray(jsonResponse.areas));
+        cargarAreasEstaticas();
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar áreas:', error);
+      console.error('❌ Detalles del error:', error.message);
+      
+      // Detectar si es un error de CORS
+      if (error.message === 'Failed to fetch') {
+        console.warn('⚠️ POSIBLE ERROR DE CORS');
+        console.warn('💡 El backend debe configurar CORS correctamente');
+      }
+      
+      console.log('🔧 Usando áreas estáticas como fallback');
+      cargarAreasEstaticas();
+    }
+  }
+  
+  // Función de fallback con áreas estáticas
+  function cargarAreasEstaticas() {
+    const areaSelect = document.getElementById('area');
+    areaSelect.innerHTML = `
+      <option value="">(Todas)</option>
+      <option>Red</option>
+      <option>Operaciones</option>
+      <option>Atención</option>
+    `;
+  }
+  
+  // Función para cargar COPEs desde el endpoint
+  async function cargarCopes(codigoDivision, codigoArea) {
+    if (!codigoDivision || !codigoArea || codigoDivision === '' || codigoArea === '') {
+      console.log('ℹ️ Sin división o área seleccionada, usando COPEs estáticos');
+      cargarCopesEstaticos();
+      return;
+    }
+    
+    try {
+      console.log(`🔄 Cargando COPEs para división: ${codigoDivision}, área: ${codigoArea}...`);
+      console.log(`📡 URL: http://localhost:8080/json-documents/copes`);
+      
+      const response = await fetch('http://localhost:8080/json-documents/copes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          codigoDivision: codigoDivision,
+          codigoArea: codigoArea
+        })
+      });
+      
+      console.log(`📊 Response status: ${response.status}`);
+      
+      if (response.status === 404) {
+        const errorData = await response.json();
+        console.warn(`⚠️ ${errorData.error}`);
+        cargarCopesEstaticos();
+        return;
+      }
+      
+      if (response.status === 400) {
+        const errorData = await response.json();
+        console.error(`❌ ${errorData.error}`);
+        cargarCopesEstaticos();
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const jsonResponse = await response.json();
+      console.log('📦 Respuesta completa del servidor:', jsonResponse);
+      
+      if (jsonResponse.success && Array.isArray(jsonResponse.copes)) {
+        console.log(`🔢 Total de COPEs recibidos: ${jsonResponse.copes.length}`);
+        console.log(`📍 División: ${jsonResponse.codigoDivision}, Área: ${jsonResponse.codigoArea}`);
+        
+        // Mostrar todos los COPEs recibidos con su estado
+        console.group('📋 Detalle de COPEs recibidos:');
+        jsonResponse.copes.forEach((cope, index) => {
+          const estado = cope.activo ? '✅ ACTIVO' : '❌ INACTIVO';
+          console.log(`  ${index + 1}. ${cope.nombre} - ${estado}`);
+        });
+        console.groupEnd();
+        
+        // Filtrar solo los COPEs activos (manejar tanto boolean como string)
+        const copesActivos = jsonResponse.copes.filter(cope => {
+          return cope.activo === true || cope.activo === 'true' || cope.activo === 1;
+        });
+        
+        console.log(`✅ COPEs activos filtrados: ${copesActivos.length} de ${jsonResponse.copes.length}`);
+        
+        if (copesActivos.length === 0) {
+          console.warn('⚠️ No se encontraron COPEs activos para esta división y área');
+          console.warn('💡 Todos los COPEs recibidos tienen activo=false');
+          console.warn('🔧 Usando COPEs estáticos como fallback');
+          cargarCopesEstaticos();
+          return;
+        }
+        
+        // Actualizar el array global de COPEs
+        copes.length = 0; // Limpiar array
+        copesActivos.forEach(cope => {
+          copes.push(cope.nombre);
+        });
+        
+        console.log(`🔄 Array de COPEs actualizado con ${copes.length} elementos`);
+        console.log('📋 COPEs cargados:', copes);
+        
+        // Regenerar la tabla con los nuevos COPEs
+        regenerarTabla();
+        
+        console.log(`📝 ${jsonResponse.message}`);
+        console.log(`⏰ Timestamp: ${jsonResponse.timestamp}`);
+      } else {
+        console.warn('⚠️ Formato de respuesta inesperado:', jsonResponse);
+        console.warn('⚠️ success:', jsonResponse.success);
+        console.warn('⚠️ copes es array:', Array.isArray(jsonResponse.copes));
+        cargarCopesEstaticos();
+      }
+    } catch (error) {
+      console.error('❌ Error al cargar COPEs:', error);
+      console.error('❌ Detalles del error:', error.message);
+      
+      // Detectar si es un error de CORS
+      if (error.message === 'Failed to fetch') {
+        console.warn('⚠️ POSIBLE ERROR DE CORS');
+        console.warn('💡 El backend debe configurar CORS correctamente');
+      }
+      
+      console.log('🔧 Usando COPEs estáticos como fallback');
+      cargarCopesEstaticos();
+    }
+  }
+  
+  // Función de fallback con COPEs estáticos
+  function cargarCopesEstaticos() {
+    console.log('🔧 No se pueden cargar COPEs - falta División o Área');
+    
+    // Mostrar mensaje informativo
+    const infoMessage = document.getElementById('infoMessage');
+    const tableWrap = document.getElementById('tableWrap');
+    const buttonContainer = document.getElementById('buttonContainer');
+    
+    if (infoMessage) {
+      infoMessage.style.display = 'flex';
+      infoMessage.className = 'info-message';
+      infoMessage.innerHTML = `
+        <span class="info-message-icon">ℹ️</span>
+        <div class="info-message-content">
+          <strong>Seleccione División y Área para cargar los COPEs</strong>
+          Por favor, seleccione una División y un Área en los filtros superiores para ver la lista de COPEs disponibles.
+        </div>
+      `;
+    }
+    
+    // Ocultar tabla y botones
+    if (tableWrap) tableWrap.classList.add('hidden');
+    if (buttonContainer) buttonContainer.classList.add('hidden');
+    
+    // Deshabilitar filtro de búsqueda
+    const buscarInput = document.getElementById('buscar');
+    if (buscarInput) {
+      buscarInput.disabled = true;
+      buscarInput.value = '';
+      console.log('🔒 Filtro de búsqueda deshabilitado');
+    }
+    
+    // Deshabilitar botones
+    const btnLimpiar = document.getElementById('btnLimpiar');
+    const btnExportar = document.getElementById('btnExportarCSV');
+    const btnGuardar = document.getElementById('btnGuardar');
+    if (btnLimpiar) btnLimpiar.disabled = true;
+    if (btnExportar) btnExportar.disabled = true;
+    if (btnGuardar) btnGuardar.disabled = true;
+    console.log('🔒 Botones deshabilitados');
+  }
+  
+  // Función para regenerar la tabla completa
+  function regenerarTabla() {
+    console.log('🔄 Regenerando tabla con COPEs actualizados...');
+    
+    // Ocultar mensaje informativo y mostrar tabla
+    const infoMessage = document.getElementById('infoMessage');
+    const tableWrap = document.getElementById('tableWrap');
+    const buttonContainer = document.getElementById('buttonContainer');
+    
+    if (infoMessage) infoMessage.style.display = 'none';
+    if (tableWrap) tableWrap.classList.remove('hidden');
+    if (buttonContainer) buttonContainer.classList.remove('hidden');
+    
+    // Habilitar filtro de búsqueda
+    const buscarInput = document.getElementById('buscar');
+    if (buscarInput) {
+      buscarInput.disabled = false;
+      console.log('🔓 Filtro de búsqueda habilitado');
+    }
+    
+    // Habilitar botones
+    const btnLimpiar = document.getElementById('btnLimpiar');
+    const btnExportar = document.getElementById('btnExportarCSV');
+    const btnGuardar = document.getElementById('btnGuardar');
+    if (btnLimpiar) btnLimpiar.disabled = false;
+    if (btnExportar) btnExportar.disabled = false;
+    if (btnGuardar) btnGuardar.disabled = false;
+    console.log('🔓 Botones habilitados');
+    
+    // Limpiar tbody
+    const tbody = document.getElementById('matrizBody');
+    tbody.innerHTML = '';
+    
+    // Regenerar filas
+    generarFilas();
+    
+    // Reaplicar selección de celdas
+    aplicarSeleccionCeldas();
+    
+    console.log('✅ Tabla regenerada exitosamente');
+  }
+  
+  // Función para deshabilitar/habilitar el selector de área
+  function actualizarEstadoSelectorArea() {
+    const divisionSelect = document.getElementById('division');
+    const areaSelect = document.getElementById('area');
+    
+    if (!divisionSelect || !areaSelect) return;
+    
+    const divisionSeleccionada = divisionSelect.value;
+    
+    if (!divisionSeleccionada || divisionSeleccionada === '') {
+      // Si no hay división seleccionada, deshabilitar área
+      areaSelect.disabled = true;
+      areaSelect.innerHTML = '<option value="">(Todas)</option>';
+      areaSelect.style.opacity = '0.6';
+      areaSelect.style.cursor = 'not-allowed';
+      console.log('🔒 Selector de Área deshabilitado - Debe seleccionar una División primero');
+    } else {
+      // Si hay división seleccionada, habilitar área
+      areaSelect.disabled = false;
+      areaSelect.style.opacity = '1';
+      areaSelect.style.cursor = 'pointer';
+      console.log('🔓 Selector de Área habilitado');
+    }
+  }
+  
+  // Event listener para el cambio de división
+  const divisionSelect = document.getElementById('division');
+  if (divisionSelect) {
+    divisionSelect.addEventListener('change', function() {
+      const selectedOption = this.options[this.selectedIndex];
+      const codigoDivision = selectedOption.dataset.codigo || selectedOption.value;
+      
+      console.log(`🔄 División cambiada a: ${this.value} (código: ${codigoDivision})`);
+      
+      // Actualizar estado del selector de área
+      actualizarEstadoSelectorArea();
+      
+      // Cargar áreas si hay división seleccionada
+      if (codigoDivision && codigoDivision !== '') {
+        cargarAreas(codigoDivision);
+      }
+    });
+  }
+  
+  // Event listener para el cambio de área
+  const areaSelect = document.getElementById('area');
+  if (areaSelect) {
+    areaSelect.addEventListener('change', function() {
+      const divisionSelect = document.getElementById('division');
+      const divisionOption = divisionSelect.options[divisionSelect.selectedIndex];
+      const codigoDivision = divisionOption.dataset.codigo || divisionOption.value;
+      
+      const areaOption = this.options[this.selectedIndex];
+      const codigoArea = areaOption.dataset.codigo || areaOption.value;
+      
+      console.log(`🔄 Área cambiada a: ${this.value} (código: ${codigoArea})`);
+      console.log(`📍 División actual: ${codigoDivision}`);
+      
+      // Cargar COPEs si hay división y área seleccionadas
+      if (codigoDivision && codigoDivision !== '' && codigoArea && codigoArea !== '') {
+        cargarCopes(codigoDivision, codigoArea);
+      } else if (!codigoArea || codigoArea === '') {
+        console.log('ℹ️ Área no seleccionada');
+        cargarCopesEstaticos();
+      }
+    });
+  }
+  
+  // Inicializar carga de configuración de agrupador de tareas
+  cargarAgrupadorTareas();
+  
+  // Inicializar carga de divisiones
+  cargarDivisiones();
+  
+  // Inicializar estado del selector de área (deshabilitado al inicio)
+  actualizarEstadoSelectorArea();
+  
+  // Inicializar tabla
+  console.log('📊 Generando encabezado...');
+  generarEncabezado();
+  console.log('📊 Generando filas...');
+  generarFilas();
+  console.log('📊 Tabla generada completamente');
+  
+  // Aplicar selección de celdas después de generar la tabla
+  console.log('🎯 Llamando a aplicarSeleccionCeldas...');
+  aplicarSeleccionCeldas();
+  console.log('✅ Script completado');
+  
+  // Manejo del toggle switch de tipo de asignación con clicks en las opciones
+  const toggleAsignacion = document.getElementById('toggleAsignacion');
+  const toggleOptions = document.querySelectorAll('.toggle-option');
+  
+  toggleOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      if (this.classList.contains('propios')) {
+        toggleAsignacion.checked = true;
+      } else {
+        toggleAsignacion.checked = false;
+      }
+    });
+  });
+  
+  // Filtrado por texto de COPE
+  const buscarInput = document.getElementById('buscar');
+  const clearSearchBtn = document.getElementById('clearSearch');
+  
+  function filtrarCopes() {
+    const filtro = buscarInput.value.trim().toLowerCase();
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      const cope = tr.querySelector('th').textContent.toLowerCase();
+      tr.style.display = cope.includes(filtro) ? '' : 'none';
+    });
+    // Mostrar/ocultar botón de limpiar
+    clearSearchBtn.classList.toggle('visible', filtro.length > 0);
+  }
+  
+  buscarInput.addEventListener('input', filtrarCopes);
+  
+  // Limpiar búsqueda
+  clearSearchBtn.addEventListener('click', () => {
+    buscarInput.value = '';
+    filtrarCopes();
+    buscarInput.focus();
+  });
+
+  // Función para recopilar datos de la matriz
+  function recopilarDatos() {
+    const data = [];
+    const divisionTexto = document.getElementById('division').value || '(Todas)';
+    const areaTexto = document.getElementById('area').value || '(Todas)';
+    
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      // Verificar si el COPE está activado
+      const toggle = tr.querySelector('.cope-toggle input[type="checkbox"]');
+      if (toggle && !toggle.checked) {
+        return; // Saltar este COPE si está desactivado
+      }
+      
+      const copeSpan = tr.querySelector('th .cope-header-content span');
+      const cope = copeSpan ? copeSpan.textContent.trim() : tr.querySelector('th').textContent.trim();
+      
+      // Obtener estado del toggle (habilitado/deshabilitado)
+      const copeHabilitado = toggle && toggle.checked ? 'SI' : 'NO';
+      
+      subcategorias.forEach(item => {
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const seleccionado = tr.querySelector(`input[name="${radioName}"]:checked`);
+        
+        if (seleccionado) {
+          const celda = seleccionado.closest('td');
+          let tipoRecurso = 'Sin asignar';
+          
+          if (celda.classList.contains('tipo-propios')) {
+            tipoRecurso = 'Propios';
+          } else if (celda.classList.contains('tipo-terceros')) {
+            tipoRecurso = 'Terceros';
+          }
+          
+          data.push({
+            Habilitado: copeHabilitado,
+            Division: divisionTexto,
+            Area: areaTexto,
+            COPE: cope,
+            Categoria: item.categoria,
+            Valor: item.sub,
+            TipoDeRecurso: tipoRecurso
+          });
+        }
+      });
+    });
+    
+    return data;
+  }
+
+  // Exportar a CSV
+  document.getElementById('btnExportarCSV').addEventListener('click', () => {
+    // Recopilar TODOS los COPEs (activos e inactivos) para CSV
+    const data = [];
+    const divisionTexto = document.getElementById('division').value || '(Todas)';
+    const areaTexto = document.getElementById('area').value || '(Todas)';
+    
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      const toggle = tr.querySelector('.cope-toggle input[type="checkbox"]');
+      const copeSpan = tr.querySelector('th .cope-header-content span');
+      const cope = copeSpan ? copeSpan.textContent.trim() : tr.querySelector('th').textContent.trim();
+      const copeHabilitado = toggle && toggle.checked ? 'SI' : 'NO';
+      
+      subcategorias.forEach(item => {
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const seleccionado = tr.querySelector(`input[name="${radioName}"]:checked`);
+        
+        if (seleccionado) {
+          const celda = seleccionado.closest('td');
+          let tipoRecurso = 'Sin asignar';
+          
+          if (celda.classList.contains('tipo-propios')) {
+            tipoRecurso = 'Propios';
+          } else if (celda.classList.contains('tipo-terceros')) {
+            tipoRecurso = 'Terceros';
+          }
+          
+          data.push({
+            Habilitado: copeHabilitado,
+            Division: divisionTexto,
+            Area: areaTexto,
+            COPE: cope,
+            Categoria: item.categoria,
+            Valor: item.sub,
+            TipoDeRecurso: tipoRecurso
+          });
+        }
+      });
+    });
+    
+    if (data.length === 0) {
+      alert('⚠️ No hay datos para exportar.\n\nPor favor, seleccione al menos una opción en la matriz antes de exportar.');
+      return;
+    }
+    
+    // Crear encabezados CSV
+    const headers = 'Habilitado,Division,Area,COPE,Categoria,Subcategoria,TipoRecurso';
+    
+    // Convertir datos a filas CSV
+    const rows = data.map(row => 
+      `${row.Habilitado},${row.Division},${row.Area},${row.COPE},${row.Categoria},${row.Valor},${row.TipoDeRecurso}`
+    ).join('\n');
+    
+    // Combinar encabezados y filas
+    const csv = headers + '\n' + rows;
+    
+    // Crear Blob y descargar
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    
+    // Nombre de archivo con fecha
+    const fecha = new Date().toISOString().split('T')[0];
+    const division = document.getElementById('division').value || 'Todas';
+    const area = document.getElementById('area').value || 'Todas';
+    link.download = `matriz_asignacion_${fecha}_${division}_${area}.csv`.replace(/ /g, '_');
+    
+    // Simular clic para descargar
+    link.click();
+    
+    // Limpiar URL temporal
+    URL.revokeObjectURL(url);
+    
+    console.log(`✅ Archivo CSV exportado: ${data.length} registros`);
+  });
+
+  // Guardar (serializa selección y muestra modal)
+  document.getElementById('btnGuardar').addEventListener('click', () => {
+    // Recopilar TODOS los COPEs (activos e inactivos) para JSON
+    const data = [];
+    const divisionTexto = document.getElementById('division').value || '(Todas)';
+    const areaTexto = document.getElementById('area').value || '(Todas)';
+    
+    document.querySelectorAll('#matriz tbody tr').forEach(tr => {
+      const toggle = tr.querySelector('.cope-toggle input[type="checkbox"]');
+      const copeSpan = tr.querySelector('th .cope-header-content span');
+      const cope = copeSpan ? copeSpan.textContent.trim() : tr.querySelector('th').textContent.trim();
+      const copeHabilitado = toggle && toggle.checked ? 'SI' : 'NO';
+      
+      subcategorias.forEach(item => {
+        const radioName = `${cope}_${item.categoria}_${item.sub}`;
+        const seleccionado = tr.querySelector(`input[name="${radioName}"]:checked`);
+        
+        if (seleccionado) {
+          const celda = seleccionado.closest('td');
+          let tipoRecurso = 'Sin asignar';
+          
+          if (celda.classList.contains('tipo-propios')) {
+            tipoRecurso = 'Propios';
+          } else if (celda.classList.contains('tipo-terceros')) {
+            tipoRecurso = 'Terceros';
+          }
+          
+          data.push({
+            Habilitado: copeHabilitado,
+            Division: divisionTexto,
+            Area: areaTexto,
+            COPE: cope,
+            Categoria: item.categoria,
+            Valor: item.sub,
+            TipoDeRecurso: tipoRecurso
+          });
+        }
+      });
+    });
+    
+    const salida = JSON.stringify({
+      division: document.getElementById('division').value,
+      area: document.getElementById('area').value,
+      selecciones: data,
+      totalSelecciones: data.length
+    }, null, 2);
+    
+    // Mostrar en modal
+    document.getElementById('jsonContent').textContent = salida;
+    document.getElementById('modalJSON').classList.add('visible');
+  });
+  
+  // Cerrar modal
+  function cerrarModal() {
+    document.getElementById('modalJSON').classList.remove('visible');
+  }
+  
+  document.getElementById('modalClose').addEventListener('click', cerrarModal);
+  document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
+  
+  // Cerrar modal al hacer clic fuera del contenido
+  document.getElementById('modalJSON').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModal();
+    }
+  });
+  
+  // Abrir modal de ayuda
+  document.getElementById('btnAyuda').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('iframeAyuda').src = 'manual_usuario_matriz.html';
+    document.getElementById('modalAyuda').classList.add('visible');
+  });
+  
+  // Pantalla completa para modal de ayuda
+  document.getElementById('btnFullscreen').addEventListener('click', () => {
+    const modalContent = document.getElementById('modalAyudaContent');
+    modalContent.classList.toggle('fullscreen');
+    
+    // Cambiar icono según el estado
+    const btn = document.getElementById('btnFullscreen');
+    if (modalContent.classList.contains('fullscreen')) {
+      btn.innerHTML = '⧉'; // Icono de salir de pantalla completa
+      btn.title = 'Salir de pantalla completa';
+    } else {
+      btn.innerHTML = '⛶'; // Icono de pantalla completa
+      btn.title = 'Pantalla completa';
+    }
+  });
+  
+  // Cerrar modal de ayuda
+  function cerrarModalAyuda() {
+    document.getElementById('modalAyuda').classList.remove('visible');
+    document.getElementById('iframeAyuda').src = '';
+    // Restaurar tamaño normal al cerrar
+    const modalContent = document.getElementById('modalAyudaContent');
+    modalContent.classList.remove('fullscreen');
+    document.getElementById('btnFullscreen').innerHTML = '⛶';
+    document.getElementById('btnFullscreen').title = 'Pantalla completa';
+  }
+  
+  document.getElementById('modalAyudaClose').addEventListener('click', cerrarModalAyuda);
+  document.getElementById('btnCerrarModalAyuda').addEventListener('click', cerrarModalAyuda);
+  
+  // Cerrar modal de ayuda al hacer clic fuera del contenido
+  document.getElementById('modalAyuda').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModalAyuda();
+    }
+  });
+  
+  // Salir de pantalla completa con tecla Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      const modalContent = document.getElementById('modalAyudaContent');
+      if (modalContent.classList.contains('fullscreen')) {
+        modalContent.classList.remove('fullscreen');
+        document.getElementById('btnFullscreen').innerHTML = '⛶';
+        document.getElementById('btnFullscreen').title = 'Pantalla completa';
+      }
+    }
+  });
+  
+  // Limpiar todos los radio buttons
+  document.getElementById('btnLimpiar').addEventListener('click', () => {
+    const confirmacion = confirm('⚠️ ATENCIÓN\n\n¿Está seguro que desea eliminar TODAS las selecciones de radio buttons?\n\nEsta acción no se puede deshacer.\n\nPresione "Aceptar" para continuar o "Cancelar" para mantener las selecciones.');
+    
+    if (confirmacion) {
+      // Deseleccionar todos los radio buttons
+      document.querySelectorAll('#matriz tbody input[type="radio"]:checked').forEach(radio => {
+        radio.checked = false;
+        radio.dataset.wasChecked = 'false';
+      });
+      
+      // Quitar todos los colores de las celdas
+      document.querySelectorAll('#matriz tbody td.tipo-propios, #matriz tbody td.tipo-terceros').forEach(celda => {
+        celda.classList.remove('tipo-propios', 'tipo-terceros');
+      });
+      
+      alert('✅ Todas las selecciones han sido eliminadas correctamente.');
+    }
+  });
+
+  // ============ FUNCIONES DE HISTORIAL ============
+  
+  /**
+   * Ver historial de auditoría para un COPE específico
+   */
+  function verHistorialCope(cope) {
+    document.getElementById('tituloModalHistorial').textContent = `📋 Visor de Auditoría: ${cope}`;
+    
+    // Obtener división y área seleccionadas
+    const division = document.getElementById('division').value;
+    const area = document.getElementById('area').value;
+    
+    // Construir URL con parámetros
+    let url = 'visor_auditoria_matriz.html?cope=' + encodeURIComponent(cope);
+    if (division) url += '&division=' + encodeURIComponent(division);
+    if (area) url += '&area=' + encodeURIComponent(area);
+    
+    document.getElementById('iframeHistorial').src = url;
+    document.getElementById('modalHistorial').classList.add('visible');
+  }
+  
+  /**
+   * Cargar datos de historial desde la base de datos (simulado)
+   */
+  function cargarHistorialCope(cope) {
+    // En producción, esto sería una llamada AJAX a un endpoint que consulte:
+    // SELECT * FROM MATRIZ_ASIGNACION_AUDITORIA WHERE COPE = ? ORDER BY ID DESC
+    
+    // Datos de ejemplo simulados
+    const historialEjemplo = [
+      {
+        ID: 3,
+        ID_REFERENCIA: 2,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: cope,
+        CATEGORIA: 'Altas',
+        SUBCATEGORIA: 'A0',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES_SF',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'jperez',
+        FECHA_REGISTRO: '2024-01-15 14:30:00'
+      },
+      {
+        ID: 2,
+        ID_REFERENCIA: 1,
+        DIVISION: 'Norte',
+        AREA: 'Soporte Técnico',
+        COPE: cope,
+        CATEGORIA: 'Altas',
+        SUBCATEGORIA: 'A0',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'mgomez',
+        FECHA_REGISTRO: '2024-01-10 10:15:00'
+      },
+      {
+        ID: 1,
+        ID_REFERENCIA: 0,
+        DIVISION: 'Sur',
+        AREA: 'Atención al Cliente',
+        COPE: cope,
+        CATEGORIA: 'Altas',
+        SUBCATEGORIA: 'A0',
+        TIPO_ORDEN: 'ORDENES',
+        TIPO_RECURSO: 'ORDENES',
+        HABILITADO: 'S',
+        USUARIO_REGISTRO: 'admin',
+        FECHA_REGISTRO: '2024-01-01 08:00:00'
+      }
+    ];
+    
+    renderizarHistorial(historialEjemplo);
+  }
+  
+  /**
+   * Renderizar timeline del historial
+   */
+  function renderizarHistorial(registros) {
+    const contenedor = document.getElementById('historialContenido');
+    
+    if (!registros || registros.length === 0) {
+      contenedor.innerHTML = '<div class="historial-empty">No se encontraron registros de auditoría para este COPE</div>';
+      return;
+    }
+    
+    contenedor.innerHTML = '';
+    
+    // Crear timeline item por cada registro
+    registros.forEach((registro, index) => {
+      const timelineItem = document.createElement('div');
+      timelineItem.className = 'timeline-item';
+      
+      // Marker
+      const marker = document.createElement('div');
+      marker.className = 'timeline-marker';
+      timelineItem.appendChild(marker);
+      
+      // Content
+      const content = document.createElement('div');
+      content.className = 'timeline-content';
+      
+      // Header
+      const header = document.createElement('div');
+      header.className = 'timeline-header';
+      
+      const idSpan = document.createElement('span');
+      idSpan.className = 'timeline-id';
+      idSpan.textContent = `ID: ${registro.ID}`;
+      if (registro.ID_REFERENCIA > 0) {
+        idSpan.textContent += ` → Ref: ${registro.ID_REFERENCIA}`;
+      }
+      
+      const fechaSpan = document.createElement('span');
+      fechaSpan.className = 'timeline-fecha';
+      fechaSpan.textContent = new Date(registro.FECHA_REGISTRO).toLocaleString('es-ES');
+      
+      header.appendChild(idSpan);
+      header.appendChild(fechaSpan);
+      
+      const usuarioDiv = document.createElement('div');
+      usuarioDiv.className = 'timeline-usuario';
+      usuarioDiv.textContent = `👤 Usuario: ${registro.USUARIO_REGISTRO}`;
+      
+      content.appendChild(header);
+      content.appendChild(usuarioDiv);
+      
+      // Cambios
+      const cambiosDiv = document.createElement('div');
+      cambiosDiv.className = 'timeline-cambios';
+      
+      // Comparar con el registro anterior (siguiente en el array porque está ordenado DESC)
+      if (index < registros.length - 1) {
+        const registroAnterior = registros[index + 1];
+        const cambios = compararRegistros(registroAnterior, registro);
+        
+        if (cambios.length > 0) {
+          cambios.forEach(cambio => {
+            const cambioItem = document.createElement('div');
+            cambioItem.className = 'cambio-item modificado';
+            
+            const label = document.createElement('span');
+            label.className = 'cambio-label';
+            label.textContent = cambio.campo + ':';
+            
+            const anterior = document.createElement('span');
+            anterior.className = 'cambio-anterior';
+            anterior.textContent = cambio.valorAnterior;
+            
+            const nuevo = document.createElement('span');
+            nuevo.className = 'cambio-nuevo';
+            nuevo.textContent = '→ ' + cambio.valorNuevo;
+            
+            cambioItem.appendChild(label);
+            cambioItem.appendChild(anterior);
+            cambioItem.appendChild(nuevo);
+            
+            cambiosDiv.appendChild(cambioItem);
+          });
+        }
+      } else {
+        // Primer registro (creación)
+        const cambioItem = document.createElement('div');
+        cambioItem.className = 'cambio-item';
+        cambioItem.innerHTML = '<span class="cambio-label">📝 Registro inicial creado</span>';
+        cambiosDiv.appendChild(cambioItem);
+      }
+      
+      // Mostrar valores actuales
+      const valoresDiv = document.createElement('div');
+      valoresDiv.style.marginTop = '10px';
+      valoresDiv.style.fontSize = '12px';
+      valoresDiv.style.color = '#666';
+      valoresDiv.innerHTML = `
+        <strong>Estado en este momento:</strong><br>
+        División: ${registro.DIVISION || 'N/A'} | Área: ${registro.AREA || 'N/A'}<br>
+        Categoría: ${registro.CATEGORIA} | Subcategoría: ${registro.SUBCATEGORIA}<br>
+        Tipo Orden: ${registro.TIPO_ORDEN} | Tipo Recurso: ${registro.TIPO_RECURSO}<br>
+        Habilitado: ${registro.HABILITADO === 'S' ? '✅ Sí' : '❌ No'}
+      `;
+      
+      cambiosDiv.appendChild(valoresDiv);
+      content.appendChild(cambiosDiv);
+      
+      timelineItem.appendChild(content);
+      contenedor.appendChild(timelineItem);
+    });
+  }
+  
+  /**
+   * Comparar dos registros de auditoría y retornar los cambios
+   */
+  function compararRegistros(anterior, nuevo) {
+    const cambios = [];
+    const campos = ['DIVISION', 'AREA', 'CATEGORIA', 'SUBCATEGORIA', 'TIPO_ORDEN', 'TIPO_RECURSO', 'HABILITADO'];
+    
+    campos.forEach(campo => {
+      if (anterior[campo] !== nuevo[campo]) {
+        cambios.push({
+          campo: campo.replace('_', ' '),
+          valorAnterior: anterior[campo] || 'N/A',
+          valorNuevo: nuevo[campo] || 'N/A'
+        });
+      }
+    });
+    
+    return cambios;
+  }
+  
+  /**
+   * Cerrar modal de historial
+   */
+  function cerrarModalHistorial() {
+    document.getElementById('modalHistorial').classList.remove('visible');
+  }
+  
+  // Event listeners para modal de historial
+  document.getElementById('modalHistorialClose').addEventListener('click', cerrarModalHistorial);
+  document.getElementById('btnCerrarModalHistorial').addEventListener('click', cerrarModalHistorial);
+  
+  document.getElementById('modalHistorial').addEventListener('click', function(e) {
+    if (e.target === this) {
+      cerrarModalHistorial();
+    }
+  });
+  
+  // Pantalla completa para modal de historial
+  document.getElementById('btnFullscreenHistorial').addEventListener('click', () => {
+    const modalContent = document.getElementById('modalHistorialContent');
+    modalContent.classList.toggle('fullscreen');
+  });
+  
+  console.log('📋 Funcionalidad de historial cargada');
+</script>
+</body>
+</html>
